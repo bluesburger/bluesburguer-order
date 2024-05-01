@@ -1,0 +1,58 @@
+package br.com.bluesburguer.orderingsystem.order.interfaces.api.dto;
+
+import org.apache.commons.lang3.NotImplementedException;
+import org.springframework.stereotype.Component;
+
+import br.com.bluesburguer.orderingsystem.domain.Fase;
+import br.com.bluesburguer.orderingsystem.order.domain.Order;
+import br.com.bluesburguer.orderingsystem.order.domain.OrderItem;
+
+@Component
+public class OrderAssembler {
+
+	public OrderDto to(Order order) {
+		var dto = new OrderDto();
+		dto.setFase(order.getFase());
+		dto.setId(order.getId()); 
+		dto.setStep(order.getStep());
+		order.getItems().forEach(item -> 
+			dto.getItems().add(this.to(item))
+		);
+		return dto;
+	}
+	
+	public OrderItemDto to(OrderItem orderItem) {
+		return new OrderItemDto(orderItem.getId());
+	}
+	
+	public Order from(OrderDto orderDto) {
+		var order = new Order(orderDto.getFase());
+		var items = orderDto.getItems().stream()
+			.map(itemDto -> {
+				var item = new OrderItem();
+				item.setId(itemDto.getId());
+				return item;				
+			})
+			.toArray(size -> new OrderItem[size]);
+		order.add(items);
+		return order;
+	}
+	
+	public OrderItem from(OrderItem item) {
+		throw new NotImplementedException();
+	}
+	
+	public Order from(OrderRequest request) {
+		var order = new Order(Fase.valueOf(request.getFase()));
+		var items = request.getItems().stream()
+			.map(id -> {
+				var item = new OrderItem();
+				item.setId(id);
+				return item;				
+			})
+			.toArray(size -> new OrderItem[size]);
+		order.add(items);
+		return order;
+	}
+	
+}
