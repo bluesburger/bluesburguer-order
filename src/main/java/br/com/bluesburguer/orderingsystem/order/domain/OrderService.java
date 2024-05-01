@@ -52,7 +52,7 @@ public class OrderService {
 			dontRollbackOn = EntityExistsException.class)
 	public Order save(OrderRequest command) {
 		var newOrder = new Order();
-		newOrder.setFase(Fase.valueOf(command.getFase()));
+		newOrder.setFase(Fase.PENDING);
 		return orderRepository.save(newOrder);
 	}
 

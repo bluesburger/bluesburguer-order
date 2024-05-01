@@ -3,7 +3,6 @@ package br.com.bluesburguer.orderingsystem.order.interfaces.api.dto;
 import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.stereotype.Component;
 
-import br.com.bluesburguer.orderingsystem.domain.Fase;
 import br.com.bluesburguer.orderingsystem.order.domain.Order;
 import br.com.bluesburguer.orderingsystem.order.domain.OrderItem;
 
@@ -40,19 +39,5 @@ public class OrderAssembler {
 	
 	public OrderItem from(OrderItem item) {
 		throw new NotImplementedException();
-	}
-	
-	public Order from(OrderRequest request) {
-		var order = new Order(Fase.valueOf(request.getFase()));
-		var items = request.getItems().stream()
-			.map(id -> {
-				var item = new OrderItem();
-				item.setId(id);
-				return item;				
-			})
-			.toArray(size -> new OrderItem[size]);
-		order.add(items);
-		return order;
-	}
-	
+	}	
 }

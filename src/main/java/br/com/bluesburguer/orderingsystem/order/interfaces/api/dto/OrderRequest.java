@@ -22,9 +22,6 @@ import lombok.ToString;
 public class OrderRequest implements Serializable {
 	
 	private static final long serialVersionUID = -621830335594903665L;
-
-	@JsonProperty(value = "fase")
-	private String fase;
 	
 	@JsonProperty(value = "items")
 	private List<Long> items = new ArrayList<>();
