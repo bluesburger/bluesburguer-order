@@ -53,7 +53,11 @@ public class OrderService {
 	public Order save(OrderRequest command) {
 		var newOrder = new Order();
 		newOrder.setFase(Fase.PENDING);
-		return orderRepository.save(newOrder);
+		var savedOrder = orderRepository.save(newOrder);
+		command.getItems().stream()
+			.map(id -> saveItem(id, savedOrder))
+			.forEach(newOrder::add);
+		return savedOrder;
 	}
 
 	@Transactional(
