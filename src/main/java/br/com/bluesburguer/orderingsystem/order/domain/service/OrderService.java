@@ -3,10 +3,12 @@ package br.com.bluesburguer.orderingsystem.order.domain.service;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.springframework.stereotype.Service;
 
 import br.com.bluesburguer.orderingsystem.domain.Fase;
+import br.com.bluesburguer.orderingsystem.domain.Step;
 import br.com.bluesburguer.orderingsystem.order.domain.Order;
 import br.com.bluesburguer.orderingsystem.order.domain.OrderItem;
 import br.com.bluesburguer.orderingsystem.order.infra.OrderItemRepository;
@@ -37,6 +39,13 @@ public class OrderService {
 
 	public List<Order> getAll() {
 		return orderRepository.findAll();
+	}
+	
+	public List<Order> getAllByStep(Step step, List<Fase> fases) {
+		if (fases == null || fases.isEmpty()) {
+			fases = Stream.of(Fase.values()).toList();
+		}
+		return orderRepository.findAllByStepAndFaseIn(step, fases);
 	}
 
 	public Optional<Order> getById(Long orderId) {

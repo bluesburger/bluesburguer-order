@@ -22,11 +22,8 @@ import br.com.bluesburguer.orderingsystem.order.interfaces.api.dto.OrderDto;
 import br.com.bluesburguer.orderingsystem.order.interfaces.api.dto.OrderItemRequest;
 import br.com.bluesburguer.orderingsystem.order.interfaces.api.dto.OrderRequest;
 import jakarta.validation.Valid;
-import kotlin.NotImplementedError;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RestController
 @RequestMapping("/api/order")
 @RequiredArgsConstructor
@@ -51,9 +48,11 @@ public class OrderRestResource {
 	}
 	
 	@GetMapping("/step/{step}")
-	public List<OrderDto> getByStep(@PathVariable Step step, @RequestParam List<Fase> fases) {
-		log.info("Searching all orders with step {} and fases {}", step, fases);
-		throw new NotImplementedError();
+	public List<OrderDto> getByStep(@PathVariable Step step, 
+			@RequestParam(required = false) List<Fase> fase) {
+		return orderService.getAllByStep(step, fase).stream()
+				.map(orderAssembler::to)
+				.toList();
 	}
 	
 	@PostMapping(consumes = { MediaType.APPLICATION_JSON_VALUE })
