@@ -3,6 +3,7 @@ package br.com.bluesburguer.orderingsystem.order.interfaces.api.dto;
 import java.util.Optional;
 
 import org.apache.commons.lang3.NotImplementedException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.com.bluesburguer.orderingsystem.order.domain.Order;
@@ -10,6 +11,9 @@ import br.com.bluesburguer.orderingsystem.order.domain.OrderItem;
 
 @Component
 public class OrderAssembler {
+	
+	@Autowired
+	private UserAssembler userAssembler;
 
 	public OrderDto to(Order order) {
 		var dto = new OrderDto();
@@ -34,7 +38,10 @@ public class OrderAssembler {
 	}
 	
 	public Order from(OrderDto orderDto) {
-		var order = new Order(orderDto.getFase());
+		var user = Optional.ofNullable(orderDto.getUser())
+				.map(userAssembler::from)
+				.orElse(null);
+		var order = new Order(orderDto.getFase(), user);
 		var items = orderDto.getItems().stream()
 			.map(itemDto -> {
 				var item = new OrderItem();

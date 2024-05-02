@@ -8,5 +8,9 @@ import br.com.bluesburguer.orderingsystem.order.domain.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-	Optional<User> findByCpfOrEmail(String cpf, String email);
+	Optional<User> findByCpf(String cpf);
+	
+	Optional<User> findByEmail(String email);
+
+	Optional<User> findByCpfEqualsOrEmailEquals(String cpf, String email);
 }

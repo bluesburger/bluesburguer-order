@@ -11,17 +11,22 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.bluesburguer.orderingsystem.domain.Fase;
-import br.com.bluesburguer.orderingsystem.order.domain.OrderService;
+import br.com.bluesburguer.orderingsystem.domain.Step;
+import br.com.bluesburguer.orderingsystem.order.domain.service.OrderService;
 import br.com.bluesburguer.orderingsystem.order.interfaces.api.dto.OrderAssembler;
 import br.com.bluesburguer.orderingsystem.order.interfaces.api.dto.OrderDto;
 import br.com.bluesburguer.orderingsystem.order.interfaces.api.dto.OrderItemRequest;
 import br.com.bluesburguer.orderingsystem.order.interfaces.api.dto.OrderRequest;
 import jakarta.validation.Valid;
+import kotlin.NotImplementedError;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/order")
 @RequiredArgsConstructor
@@ -43,6 +48,12 @@ public class OrderRestResource {
 		return orderService.getById(orderId)
 			.map(orderAssembler::to)
 			.orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
+	}
+	
+	@GetMapping("/step/{step}")
+	public List<OrderDto> getByStep(@PathVariable Step step, @RequestParam List<Fase> fases) {
+		log.info("Searching all orders with step {} and fases {}", step, fases);
+		throw new NotImplementedError();
 	}
 	
 	@PostMapping(consumes = { MediaType.APPLICATION_JSON_VALUE })

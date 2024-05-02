@@ -71,6 +71,8 @@ public class Order implements Serializable {
     private List<OrderItem> items = new ArrayList<>();
     
     @Setter
+    @NonNull
+    @NotNull
 	@ManyToOne
     @JoinColumn(name = "user_id")
 	private User user;
