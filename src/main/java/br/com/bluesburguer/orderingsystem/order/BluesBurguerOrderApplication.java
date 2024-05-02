@@ -1,15 +1,10 @@
 package br.com.bluesburguer.orderingsystem.order;
 
-import java.util.concurrent.TimeUnit;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
-import br.com.bluesburguer.orderingsystem.domain.Fase;
-import br.com.bluesburguer.orderingsystem.order.domain.Order;
-import br.com.bluesburguer.orderingsystem.order.domain.OrderItem;
 import br.com.bluesburguer.orderingsystem.order.domain.service.OrderService;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
