@@ -1,5 +1,7 @@
 package br.com.bluesburguer.orderingsystem.order.interfaces.api.dto;
 
+import java.util.Optional;
+
 import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.stereotype.Component;
 
@@ -17,6 +19,10 @@ public class OrderAssembler {
 		order.getItems().forEach(item -> 
 			dto.getItems().add(this.to(item))
 		);
+		
+		dto.setUser(Optional.ofNullable(order.getUser())
+			.map(user -> new UserDto(user.getId(), user.getCpf(), user.getEmail()))
+			.orElseThrow(() -> new RuntimeException("Usuário não definido")));
 		return dto;
 	}
 	

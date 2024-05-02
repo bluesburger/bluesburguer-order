@@ -1,8 +1,6 @@
 package br.com.bluesburguer.orderingsystem.order.interfaces.api.dto;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -19,13 +17,16 @@ import lombok.ToString;
 @Getter
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class OrderRequest implements Serializable {
+public class UserRequest implements Serializable {
 	
-	private static final long serialVersionUID = -621830335594903665L;
-	
-	@JsonProperty(value = "items")
-	private List<OrderItemRequest> items = new ArrayList<>();
+	private static final long serialVersionUID = 3695870866440519918L;
 
-	@JsonProperty(value = "user")
-	private UserRequest user;
+	@JsonProperty(value = "id")
+	private Long id;
+	
+	@JsonProperty(value = "cpf")
+	private String cpf;
+	
+	@JsonProperty(value = "email")
+	private String email;
 }

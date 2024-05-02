@@ -9,8 +9,10 @@ import org.springframework.stereotype.Service;
 import br.com.bluesburguer.orderingsystem.domain.Fase;
 import br.com.bluesburguer.orderingsystem.order.infra.OrderItemRepository;
 import br.com.bluesburguer.orderingsystem.order.infra.OrderRepository;
+import br.com.bluesburguer.orderingsystem.order.infra.UserRepository;
 import br.com.bluesburguer.orderingsystem.order.interfaces.api.dto.OrderItemRequest;
 import br.com.bluesburguer.orderingsystem.order.interfaces.api.dto.OrderRequest;
+import br.com.bluesburguer.orderingsystem.order.interfaces.api.dto.UserRequest;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -30,6 +32,8 @@ public class OrderService {
 	private final OrderItemRepository orderItemRepository;
 
 	private final OrderRepository orderRepository;
+	
+	private final UserRepository userRepository;
 
 	public List<Order> getAll() {
 		return orderRepository.findAll();
@@ -54,12 +58,39 @@ public class OrderService {
 	public Order createNewOrder(OrderRequest command) {
 		var newOrder = new Order();
 		newOrder.setFase(Fase.PENDING);
+		
+		Optional.ofNullable(command.getUser())
+			.map(this::saveUserIfNotExistant)
+			.ifPresent(newOrder::setUser);
+		
 		var savedOrder = orderRepository.save(newOrder);
 		command.getItems().stream()
 			.map(item -> saveItem(item, savedOrder))
 			.forEach(savedOrder::add);
 		
 		return savedOrder;
+	}
+	
+	private User saveUserIfNotExistant(UserRequest userRequest) {
+		var optionalCpf = Optional.ofNullable(userRequest.getCpf());
+		var optionalEmail = Optional.ofNullable(userRequest.getEmail());
+		
+		var cpf = optionalCpf.orElse(null);
+		var email = optionalEmail.orElse(null);
+		return userRepository.findByCpfOrEmail(cpf, email)
+				.map(user -> {
+					user.setCpf(cpf);
+					user.setEmail(email);
+					return userRepository.save(user);
+				})
+				.orElseGet(() -> createIdentifiedUser(cpf, email));
+	}
+	
+	private User createIdentifiedUser(String cpf, String email) {
+		var newUser = new User();
+		newUser.setCpf(cpf);
+		newUser.setEmail(email);
+		return userRepository.save(newUser);
 	}
 	
 	/*

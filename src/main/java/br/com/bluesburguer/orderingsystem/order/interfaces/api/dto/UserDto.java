@@ -1,14 +1,8 @@
 package br.com.bluesburguer.orderingsystem.order.interfaces.api.dto;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 
-import br.com.bluesburguer.orderingsystem.domain.Fase;
-import br.com.bluesburguer.orderingsystem.domain.Step;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -23,16 +17,11 @@ import lombok.ToString;
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderDto {
+public class UserDto {
 
 	private Long id;
 	
-	private Step step;
+	private String cpf;
 	
-	@NotNull
-	private Fase fase;
-	
-	private List<OrderItemDto> items = new ArrayList<>();
-	
-	private UserDto user;
+	private String email;
 }
