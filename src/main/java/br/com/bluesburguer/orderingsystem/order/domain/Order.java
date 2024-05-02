@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -18,8 +17,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -77,13 +74,5 @@ public class Order implements Serializable {
     
     public void remove(OrderItem... itens) {
     	this.items.removeAll(List.of(itens));
-    }
-    
-    @PrePersist
-    @PreUpdate
-    public void calculateTotalValue() {
-    	this.totalValue = this.items.stream()
-    			.map(i -> i.getCurrentValue())
-    			.collect(Collectors.summingDouble(Double::doubleValue));
     }
 }

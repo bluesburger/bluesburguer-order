@@ -21,7 +21,10 @@ public class OrderAssembler {
 	}
 	
 	public OrderItemDto to(OrderItem orderItem) {
-		return new OrderItemDto(orderItem.getId());
+		var item = new OrderItemDto(orderItem.getId(), orderItem.getQuantity());
+		// TODO: consultar valor no contexto de Menu
+		// item.setItemValue(orderItem.getItemValue());
+		return item;
 	}
 	
 	public Order from(OrderDto orderDto) {

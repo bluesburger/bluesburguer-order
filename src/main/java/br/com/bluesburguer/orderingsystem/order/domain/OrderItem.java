@@ -40,7 +40,7 @@ public class OrderItem implements Serializable {
 	
 	@Default
 	@Column
-	private Double currentValue = 0D;
+	private Integer quantity = 1;
 	
 	@CreationTimestamp
     private LocalDateTime createdTime;

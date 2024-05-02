@@ -17,6 +17,7 @@ import br.com.bluesburguer.orderingsystem.domain.Fase;
 import br.com.bluesburguer.orderingsystem.order.domain.OrderService;
 import br.com.bluesburguer.orderingsystem.order.interfaces.api.dto.OrderAssembler;
 import br.com.bluesburguer.orderingsystem.order.interfaces.api.dto.OrderDto;
+import br.com.bluesburguer.orderingsystem.order.interfaces.api.dto.OrderItemRequest;
 import br.com.bluesburguer.orderingsystem.order.interfaces.api.dto.OrderRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -45,14 +46,14 @@ public class OrderRestResource {
 	}
 	
 	@PostMapping(consumes = { MediaType.APPLICATION_JSON_VALUE })
-	public OrderDto add(@Valid @RequestBody OrderRequest orderRequest) {
-		return Optional.ofNullable(orderService.save(orderRequest))
+	public OrderDto createNewOrder(@Valid @RequestBody OrderRequest orderRequest) {
+		return Optional.ofNullable(orderService.createNewOrder(orderRequest))
 				.map(orderAssembler::to)
 				.orElseThrow(() -> new IllegalArgumentException("Impossível salvar novo pedido")); // FIXME: adicionar exceção específica
 	}
 	
 	@PutMapping(value = "/{orderId}")
-	public OrderDto updateOrderItems(@PathVariable Long orderId, @RequestBody List<Long> orderItems) {
+	public OrderDto updateOrderItems(@PathVariable Long orderId, @Valid @RequestBody List<OrderItemRequest> orderItems) {
 		return Optional.ofNullable(orderService.update(orderId, orderItems))
 				.map(orderAssembler::to)
 				.orElseThrow(() -> new IllegalArgumentException("Impossível salvar novo pedido")); // FIXME: adicionar exceção específica

@@ -14,4 +14,10 @@ public class OrderItemDto {
 	@NotNull
 	@NonNull
 	private Long id;
+	
+	@NotNull
+	@NonNull
+	private Integer quantity;
+	
+	private Double itemValue;
 }

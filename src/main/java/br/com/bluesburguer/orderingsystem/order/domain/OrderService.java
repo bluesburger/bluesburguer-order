@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import br.com.bluesburguer.orderingsystem.domain.Fase;
 import br.com.bluesburguer.orderingsystem.order.infra.OrderItemRepository;
 import br.com.bluesburguer.orderingsystem.order.infra.OrderRepository;
+import br.com.bluesburguer.orderingsystem.order.interfaces.api.dto.OrderItemRequest;
 import br.com.bluesburguer.orderingsystem.order.interfaces.api.dto.OrderRequest;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
@@ -50,15 +51,25 @@ public class OrderService {
 	@Transactional(
 			rollbackOn = IllegalArgumentException.class, 
 			dontRollbackOn = EntityExistsException.class)
-	public Order save(OrderRequest command) {
+	public Order createNewOrder(OrderRequest command) {
 		var newOrder = new Order();
 		newOrder.setFase(Fase.PENDING);
 		var savedOrder = orderRepository.save(newOrder);
 		command.getItems().stream()
-			.map(id -> saveItem(id, savedOrder))
-			.forEach(newOrder::add);
+			.map(item -> saveItem(item, savedOrder))
+			.forEach(savedOrder::add);
+		
 		return savedOrder;
 	}
+	
+	/*
+	private Double calcularValorTotalPedido(Order order) {
+		return order.getItems().stream()
+			.map(i -> i.getId())
+			.map(menuService::findPriceByItemId)
+			.collect(Collectors.summingDouble(Double::doubleValue));
+	}
+	*/
 
 	@Transactional(
 			rollbackOn = IllegalArgumentException.class, 
@@ -74,12 +85,12 @@ public class OrderService {
 	@Transactional(
 			rollbackOn = IllegalArgumentException.class, 
 			dontRollbackOn = EntityExistsException.class)
-	public Order update(Long orderId, List<Long> orderItems) {
+	public Order update(Long orderId, List<OrderItemRequest> orderItems) {
 		return getById(orderId)
 				.map(order -> {
 					orderItemRepository.deleteAllByOrderId(order.getId());
 					orderItems.stream()
-						.map(id -> saveItem(id, order))
+						.map(item -> saveItem(item, order))
 						.forEach(order::add);
 					return order;
 				}).orElseThrow(() -> new IllegalArgumentException("Pedido não encontrado"));
@@ -88,15 +99,12 @@ public class OrderService {
 	@Transactional(
 			rollbackOn = IllegalArgumentException.class, 
 			dontRollbackOn = EntityExistsException.class)
-	public OrderItem saveItem(Long id, Order order) {
+	public OrderItem saveItem(OrderItemRequest itemRequest, Order order) {
 		var item = new OrderItem();
-		item.setId(id);
+		item.setId(itemRequest.getId());
 		item.setOrder(order);
+		item.setQuantity(itemRequest.getQuantity());
 		return orderItemRepository.save(item);
-	}
-	
-	private void removeItem(Long id) {
-		orderItemRepository.deleteById(id);
 	}
 
 	@Transactional(
@@ -104,6 +112,7 @@ public class OrderService {
 			dontRollbackOn = EntityExistsException.class)
 	public void delete(Long orderId) {
 		var order = getById(orderId).orElseThrow(() -> new IllegalArgumentException("Pedido não encontrado"));
+		orderItemRepository.deleteAllByOrderId(orderId);
 		orderRepository.delete(order);
 	}
 
