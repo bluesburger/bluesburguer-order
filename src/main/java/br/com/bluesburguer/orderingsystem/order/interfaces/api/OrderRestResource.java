@@ -69,11 +69,18 @@ public class OrderRestResource {
 				.orElseThrow(() -> new IllegalArgumentException("Impossível salvar novo pedido")); // FIXME: adicionar exceção específica
 	}
 	
+	@PutMapping(value = "/{orderId}/{step}/{fase}")
+	public OrderDto updateStepAndFase(@PathVariable Long orderId, @PathVariable Step step, @PathVariable Fase fase) {
+		return Optional.ofNullable(orderService.updateStepAndFase(orderId, step, fase))
+				.map(orderAssembler::to)
+				.orElseThrow(() -> new IllegalArgumentException("Impossível alterar pedido")); // FIXME: adicionar exceção específica
+	}
+	
 	@PutMapping(value = "/{orderId}/{fase}")
 	public OrderDto updateFase(@PathVariable Long orderId, @PathVariable Fase fase) {
 		return Optional.ofNullable(orderService.updateFase(orderId, fase))
 				.map(orderAssembler::to)
-				.orElseThrow(() -> new IllegalArgumentException("Impossível salvar novo pedido")); // FIXME: adicionar exceção específica
+				.orElseThrow(() -> new IllegalArgumentException("Impossível alterar pedido")); // FIXME: adicionar exceção específica
 	}
 	
 	@DeleteMapping("/{orderId}")

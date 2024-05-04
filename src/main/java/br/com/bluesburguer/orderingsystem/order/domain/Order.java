@@ -55,6 +55,7 @@ public class Order implements Serializable {
     @NotNull
     private Double totalValue = 0D;
     
+    @Setter
     @Default
     @NotNull
     @Enumerated(EnumType.STRING)

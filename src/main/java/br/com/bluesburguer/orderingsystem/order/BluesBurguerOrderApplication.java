@@ -1,11 +1,9 @@
 package br.com.bluesburguer.orderingsystem.order;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
-import br.com.bluesburguer.orderingsystem.order.domain.service.OrderService;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,8 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 @EnableDiscoveryClient
 public class BluesBurguerOrderApplication {
 	
-	@Autowired
-	private OrderService orderService;
+	// @Autowired private OrderService orderService;
 	
 	public static void main(String[] args) {
 		SpringApplication.run(BluesBurguerOrderApplication.class, args);

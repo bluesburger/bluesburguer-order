@@ -88,6 +88,18 @@ public class OrderService {
 			.collect(Collectors.summingDouble(Double::doubleValue));
 	}
 	*/
+	
+	@Transactional(
+			rollbackOn = IllegalArgumentException.class, 
+			dontRollbackOn = EntityExistsException.class)
+	public Order updateStepAndFase(Long orderId, Step step, Fase fase) {
+		return getById(orderId)
+			.map(order -> {
+				order.setStep(step);
+				order.setFase(fase);
+				return orderRepository.save(order);
+			}).orElseThrow(() -> new IllegalArgumentException("Pedido não encontrado"));
+	}
 
 	@Transactional(
 			rollbackOn = IllegalArgumentException.class, 
