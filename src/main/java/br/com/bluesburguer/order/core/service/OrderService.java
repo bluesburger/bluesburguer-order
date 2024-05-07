@@ -46,7 +46,7 @@ public class OrderService implements OrderPort {
 		if (fases == null || fases.isEmpty()) {
 			fases = Stream.of(OrderFase.values()).toList();
 		}
-		return orderRepository.findAllByStepAndFaseIn(step, fases);
+		return orderRepository.findAllByStepAndFaseInOrderByCreatedTime(step, fases);
 	}
 
 	public Optional<Order> getById(Long orderId) {

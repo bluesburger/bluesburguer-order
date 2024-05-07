@@ -10,6 +10,6 @@ import br.com.bluesburguer.order.core.domain.OrderStep;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
-	List<Order> findAllByStepAndFaseIn(OrderStep step, List<OrderFase> fases);
+	List<Order> findAllByStepAndFaseInOrderByCreatedTime(OrderStep step, List<OrderFase> fases);
 	
 }

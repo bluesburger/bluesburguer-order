@@ -33,19 +33,19 @@ public class OrderRestResource {
 	
 	private final OrderService orderService;
 	
-	private final OrderMapper orderAssembler;
+	private final OrderMapper orderMapper;
 	
 	@GetMapping
 	public List<OrderDto> getAll() {
 		return orderService.getAll().stream()
-			.map(orderAssembler::to)
+			.map(orderMapper::to)
 			.toList();
 	}
 
 	@GetMapping("/{orderId}")
 	public OrderDto getById(@PathVariable Long orderId) {
 		return orderService.getById(orderId)
-			.map(orderAssembler::to)
+			.map(orderMapper::to)
 			.orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
 	}
 	
@@ -53,14 +53,14 @@ public class OrderRestResource {
 	public List<OrderDto> getByStep(@PathVariable OrderStep step, 
 			@RequestParam(required = false) List<OrderFase> fase) {
 		return orderService.getAllByStep(step, fase).stream()
-				.map(orderAssembler::to)
+				.map(orderMapper::to)
 				.toList();
 	}
 	
 	@PostMapping(consumes = { MediaType.APPLICATION_JSON_VALUE })
 	public ResponseEntity<URI> createNewOrder(@Valid @RequestBody OrderRequest orderRequest) {
 		return orderService.createNewOrder(orderRequest)
-				.map(orderAssembler::to)
+				.map(orderMapper::to)
 				.map(dto -> {
 					var orderId = String.valueOf(dto.getId());
 					URI location = URI.create(orderId);
@@ -73,7 +73,7 @@ public class OrderRestResource {
 	@PutMapping(value = "/{orderId}")
 	public ResponseEntity<OrderDto> updateOrderItems(@PathVariable Long orderId, @Valid @RequestBody List<OrderItemRequest> orderItems) {
 		return orderService.update(orderId, orderItems)
-				.map(orderAssembler::to)
+				.map(orderMapper::to)
 				.map(ResponseEntity::ok)
 				.orElseThrow(() -> new OrderNotFoundException("salvar"));
 	}
@@ -81,14 +81,14 @@ public class OrderRestResource {
 	@PutMapping(value = "/{orderId}/{step}/{fase}")
 	public OrderDto updateStepAndFase(@PathVariable Long orderId, @PathVariable OrderStep step, @PathVariable OrderFase fase) {
 		return orderService.updateStepAndFase(orderId, step, fase)
-				.map(orderAssembler::to)
+				.map(orderMapper::to)
 				.orElseThrow(() -> new OrderNotFoundException("alterar"));
 	}
 	
 	@PutMapping(value = "/{orderId}/{fase}")
 	public OrderDto updateFase(@PathVariable Long orderId, @PathVariable OrderFase fase) {
 		return orderService.updateFase(orderId, fase)
-				.map(orderAssembler::to)
+				.map(orderMapper::to)
 				.orElseThrow(() -> new OrderNotFoundException("alterar"));
 	}
 	
