@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import br.com.bluesburguer.order.adapters.in.user.dto.UserRequest;
 import br.com.bluesburguer.order.adapters.out.persistence.entities.OrderUser;
 import br.com.bluesburguer.order.adapters.out.persistence.repository.UserRepository;
+import br.com.bluesburguer.order.core.domain.Cpf;
 import br.com.bluesburguer.order.ports.UserPort;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -32,11 +33,11 @@ public class UserService implements UserPort {
 		return saveIfNotExist(userRequest.getCpf(), userRequest.getEmail());
 	}
 	
-	public OrderUser saveIfNotExist(String cpf, String email) {
+	public OrderUser saveIfNotExist(Cpf cpf, String email) {
 		
 		Optional<OrderUser> userOptional = Optional.empty();
 		if (Objects.nonNull(cpf)) {
-			userOptional = userRepository.findByCpf(cpf);
+			userOptional = userRepository.findByCpf(cpf.getValue());
 			if (userOptional.isPresent()) {
 				return userOptional.get();
 			}
@@ -51,9 +52,9 @@ public class UserService implements UserPort {
 		return createIdentifiedUser(cpf, email);
 	}
 	
-	private OrderUser createIdentifiedUser(String cpf, String email) {
+	private OrderUser createIdentifiedUser(Cpf cpf, String email) {
 		var newUser = new OrderUser();
-		newUser.setCpf(cpf);
+		newUser.setCpf(cpf.getValue());
 		newUser.setEmail(email);
 		return userRepository.save(newUser);
 	}

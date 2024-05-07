@@ -7,10 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.com.bluesburguer.order.adapters.in.order.item.dto.OrderItemDto;
+import br.com.bluesburguer.order.adapters.in.user.dto.UserDto;
 import br.com.bluesburguer.order.adapters.in.user.dto.UserMapper;
 import br.com.bluesburguer.order.adapters.out.persistence.entities.Order;
 import br.com.bluesburguer.order.adapters.out.persistence.entities.OrderItem;
-import br.com.bluesburguer.order.adapters.in.user.dto.UserDto;
+import br.com.bluesburguer.order.core.domain.Cpf;
 
 @Component
 public class OrderMapper {
@@ -28,7 +29,7 @@ public class OrderMapper {
 		);
 		
 		dto.setUser(Optional.ofNullable(order.getUser())
-			.map(user -> new UserDto(user.getId(), user.getCpf(), user.getEmail()))
+			.map(user -> new UserDto(user.getId(), new Cpf(user.getCpf()), user.getEmail()))
 			.orElseThrow(() -> new RuntimeException("Usuário não definido")));
 		return dto;
 	}

@@ -3,6 +3,8 @@ package br.com.bluesburguer.order.adapters.in.user.dto;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 
+import br.com.bluesburguer.order.core.domain.Cpf;
+import jakarta.persistence.Embedded;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -21,7 +23,8 @@ public class UserDto {
 
 	private Long id;
 	
-	private String cpf;
+	@Embedded
+	private Cpf cpf;
 	
 	private String email;
 }
