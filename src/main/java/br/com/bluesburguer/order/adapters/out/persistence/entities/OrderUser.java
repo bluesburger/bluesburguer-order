@@ -5,10 +5,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.CreationTimestamp;
 
-import br.com.bluesburguer.order.core.domain.Cpf;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -48,17 +46,4 @@ public class OrderUser implements Serializable {
 	@Default
     @OneToMany(mappedBy = "user")
     private List<Order> orders = new ArrayList<>();
-	
-	public OrderUser(Long id, Cpf cpf, String email) {
-		if (ObjectUtils.isEmpty(cpf) && ObjectUtils.isEmpty(email)) {
-			throw new IllegalArgumentException("Usuário precisa estar identificado por cpf ou email");
-		}
-		
-		this.cpf = cpf.getValue();
-		this.email = email;
-	}
-	
-	public OrderUser(Cpf cpf, String email) {
-		this(null, cpf, email);
-	}
 }

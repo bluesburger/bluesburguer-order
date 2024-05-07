@@ -69,9 +69,10 @@ public class OrderService implements OrderPort {
 		var newOrder = new Order();
 		newOrder.setFase(OrderFase.PENDING);
 		
-		Optional.ofNullable(command.getUser())
-			.map(userService::saveIfNotExist)
-			.ifPresent(newOrder::setUser);
+		var orderUser = Optional.ofNullable(command.getUser())
+				.map(userService::saveIfNotExist)
+				.orElse(userService.createAnonymous());
+		newOrder.setUser(orderUser);
 		
 		var savedOrder = orderRepository.save(newOrder);
 		command.getItems().stream()
@@ -80,7 +81,7 @@ public class OrderService implements OrderPort {
 		
 		return Optional.of(savedOrder);
 	}
-	
+
 	@Transactional(
 			rollbackOn = IllegalArgumentException.class, 
 			dontRollbackOn = EntityExistsException.class)

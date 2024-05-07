@@ -1,8 +1,9 @@
 spring:
   cloud:
     consul:
+      enabled: false
       config:
-        enabled: true
+        enabled: false
         prefixes:
         - configuration
         defaultContext: apps

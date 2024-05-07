@@ -21,18 +21,22 @@ public class UserService implements UserPort {
 
 	private final UserRepository userRepository;
 	
+	@Override
 	public List<OrderUser> findAll() {
 		return userRepository.findAll();
 	}
 	
+	@Override
 	public Optional<OrderUser> findById(Long id) {
 		return userRepository.findById(id);
 	}
 	
+	@Override
 	public OrderUser saveIfNotExist(UserRequest userRequest) {
 		return saveIfNotExist(userRequest.getCpf(), userRequest.getEmail());
 	}
 	
+	@Override
 	public OrderUser saveIfNotExist(Cpf cpf, String email) {
 		
 		Optional<OrderUser> userOptional = Optional.empty();
@@ -52,10 +56,17 @@ public class UserService implements UserPort {
 		return createIdentifiedUser(cpf, email);
 	}
 	
-	private OrderUser createIdentifiedUser(Cpf cpf, String email) {
+	@Override
+	public OrderUser createIdentifiedUser(Cpf cpf, String email) {
 		var newUser = new OrderUser();
 		newUser.setCpf(cpf.getValue());
 		newUser.setEmail(email);
+		return userRepository.save(newUser);
+	}
+
+	@Override
+	public OrderUser createAnonymous() {
+		var newUser = new OrderUser();
 		return userRepository.save(newUser);
 	}
 }
