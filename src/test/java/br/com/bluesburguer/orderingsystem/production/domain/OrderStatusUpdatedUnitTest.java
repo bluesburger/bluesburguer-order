@@ -9,10 +9,10 @@ import org.junit.jupiter.api.Test;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import br.com.bluesburguer.orderingsystem.domain.Fase;
-import br.com.bluesburguer.orderingsystem.domain.Status;
-import br.com.bluesburguer.orderingsystem.domain.Step;
-import br.com.bluesburguer.orderingsystem.domain.event.OrderStatusUpdated;
+import br.com.bluesburguer.order.core.domain.OrderFase;
+import br.com.bluesburguer.order.core.domain.OrderStatus;
+import br.com.bluesburguer.order.core.domain.OrderStep;
+import br.com.bluesburguer.order.core.domain.event.OrderStatusUpdated;
 
 class OrderStatusUpdatedUnitTest {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().findAndRegisterModules();    
@@ -20,7 +20,7 @@ class OrderStatusUpdatedUnitTest {
 	@Test
 	void shouldInstance_WithDefaultDateTime() {
 		var id = UUID.randomUUID();
-		var status = new Status(Step.KITCHEN, Fase.IN_PROGRESS);
+		var status = new OrderStatus(OrderStep.KITCHEN, OrderFase.IN_PROGRESS);
 		var orderStatus = new OrderStatusUpdated(id, status);
 		
 		assertThat(orderStatus).isNotNull()
@@ -31,7 +31,7 @@ class OrderStatusUpdatedUnitTest {
 	@Test
 	void shouldSerialize() throws JsonProcessingException {
 		var id = UUID.randomUUID();
-		var status = new Status(Step.KITCHEN, Fase.IN_PROGRESS);
+		var status = new OrderStatus(OrderStep.KITCHEN, OrderFase.IN_PROGRESS);
 		var orderStatus = new OrderStatusUpdated(id, status);
 		
 		var json = OBJECT_MAPPER.writeValueAsString(orderStatus);
