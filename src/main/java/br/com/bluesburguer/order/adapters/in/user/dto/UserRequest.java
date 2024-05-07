@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import br.com.bluesburguer.order.core.domain.Cpf;
+import br.com.bluesburguer.order.core.domain.Email;
 import jakarta.persistence.Embedded;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -31,5 +32,6 @@ public class UserRequest implements Serializable {
 	private Cpf cpf;
 	
 	@JsonProperty(value = "email")
-	private String email;
+	@Embedded
+	private Email email;
 }

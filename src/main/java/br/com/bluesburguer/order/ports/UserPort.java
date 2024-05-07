@@ -6,6 +6,7 @@ import java.util.Optional;
 import br.com.bluesburguer.order.adapters.in.user.dto.UserRequest;
 import br.com.bluesburguer.order.adapters.out.persistence.entities.OrderUser;
 import br.com.bluesburguer.order.core.domain.Cpf;
+import br.com.bluesburguer.order.core.domain.Email;
 
 public interface UserPort {
 
@@ -15,9 +16,9 @@ public interface UserPort {
 	
 	OrderUser saveIfNotExist(UserRequest userRequest);
 	
-	OrderUser saveIfNotExist(Cpf cpf, String email);
+	OrderUser saveIfNotExist(Cpf cpf, Email email);
 	
-	OrderUser createIdentifiedUser(Cpf cpf, String email);
+	OrderUser createIdentifiedUser(Cpf cpf, Email email);
 	
 	OrderUser createAnonymous();
 }

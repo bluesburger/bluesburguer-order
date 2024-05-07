@@ -10,6 +10,7 @@ import br.com.bluesburguer.order.adapters.in.user.dto.UserRequest;
 import br.com.bluesburguer.order.adapters.out.persistence.entities.OrderUser;
 import br.com.bluesburguer.order.adapters.out.persistence.repository.UserRepository;
 import br.com.bluesburguer.order.core.domain.Cpf;
+import br.com.bluesburguer.order.core.domain.Email;
 import br.com.bluesburguer.order.ports.UserPort;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +38,7 @@ public class UserService implements UserPort {
 	}
 	
 	@Override
-	public OrderUser saveIfNotExist(Cpf cpf, String email) {
+	public OrderUser saveIfNotExist(Cpf cpf, Email email) {
 		
 		Optional<OrderUser> userOptional = Optional.empty();
 		if (Objects.nonNull(cpf)) {
@@ -48,7 +49,7 @@ public class UserService implements UserPort {
 		}
 		
 		if (userOptional.isEmpty() && Objects.nonNull(email)) {
-			userOptional = userRepository.findByEmail(email);
+			userOptional = userRepository.findByEmail(email.getValue());
 			if (userOptional.isPresent()) {
 				return userOptional.get();
 			}
@@ -57,10 +58,10 @@ public class UserService implements UserPort {
 	}
 	
 	@Override
-	public OrderUser createIdentifiedUser(Cpf cpf, String email) {
+	public OrderUser createIdentifiedUser(Cpf cpf, Email email) {
 		var newUser = new OrderUser();
 		newUser.setCpf(cpf.getValue());
-		newUser.setEmail(email);
+		newUser.setEmail(email.getValue());
 		return userRepository.save(newUser);
 	}
 
