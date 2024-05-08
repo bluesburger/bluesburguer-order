@@ -1,0 +1,9 @@
+{
+	"properties": [
+		{
+		  "name": "cloud.aws.endpoint.uri",
+		  "type": "java.lang.String",
+		  "description": "Endpoint base da AWS"
+		}
+	]
+}
