@@ -19,6 +19,7 @@ import br.com.bluesburguer.order.adapters.in.order.dto.OrderDto;
 import br.com.bluesburguer.order.adapters.in.order.dto.OrderMapper;
 import br.com.bluesburguer.order.adapters.in.order.dto.OrderRequest;
 import br.com.bluesburguer.order.adapters.in.order.item.dto.OrderItemRequest;
+import br.com.bluesburguer.order.adapters.in.order.utils.ResponseUtils;
 import br.com.bluesburguer.order.adapters.out.OrderNotFoundException;
 import br.com.bluesburguer.order.core.domain.OrderFase;
 import br.com.bluesburguer.order.core.domain.OrderStep;
@@ -64,8 +65,7 @@ public class OrderRestResource {
 				.map(dto -> {
 					var orderId = String.valueOf(dto.getId());
 					URI location = URI.create(orderId);
-					ResponseEntity<URI> build = ResponseEntity.created(location).build();
-					return build;
+					return ResponseUtils.<URI>created(location);
 				})
 				.orElseThrow(() -> new OrderNotFoundException("salvar"));
 	}

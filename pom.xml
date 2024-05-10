@@ -27,11 +27,6 @@
 			<artifactId>springfox-boot-starter</artifactId>
 			<version>3.0.0</version>
 		</dependency>
-		<!--		<dependency>-->
-		<!--		    <groupId>io.springfox</groupId>-->
-		<!--		    <artifactId>springfox-boot-starter</artifactId>-->
-		<!--		    <version>3.0.0</version>-->
-		<!--		</dependency>-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -100,7 +95,13 @@
 		    <artifactId>awaitility</artifactId>
 		    <scope>test</scope>
 		</dependency>
-
+		
+		<!-- Validator -->		
+		<dependency>
+		    <groupId>br.com.caelum.stella</groupId>
+		    <artifactId>caelum-stella-core</artifactId>
+		    <version>2.1.6</version>
+		</dependency>
 		
 		<!-- Consul Service Discovery -->
 		<dependency>
@@ -137,6 +138,17 @@
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-mysql</artifactId>
 			<version>9.10.2</version>
+		</dependency>
+		
+		<!-- Jupiter Params -->
+		<dependency>
+		    <groupId>org.junit.jupiter</groupId>
+		    <artifactId>junit-jupiter-params</artifactId>
+		    <scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>junit-jupiter</artifactId>
 		</dependency>
 	</dependencies>
 

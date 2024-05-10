@@ -3,7 +3,6 @@ package br.com.bluesburguer.order.adapters.in.order.dto;
 import java.util.Optional;
 
 import org.apache.commons.lang3.NotImplementedException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.com.bluesburguer.order.adapters.in.order.item.dto.OrderItemDto;
@@ -11,12 +10,13 @@ import br.com.bluesburguer.order.adapters.in.user.dto.UserDto;
 import br.com.bluesburguer.order.adapters.in.user.dto.UserMapper;
 import br.com.bluesburguer.order.adapters.out.persistence.entities.Order;
 import br.com.bluesburguer.order.adapters.out.persistence.entities.OrderItem;
+import lombok.RequiredArgsConstructor;
 
 @Component
+@RequiredArgsConstructor
 public class OrderMapper {
 	
-	@Autowired
-	private UserMapper userAssembler;
+	private final UserMapper userAssembler;
 
 	public OrderDto to(Order order) {
 		var dto = new OrderDto();
@@ -36,10 +36,7 @@ public class OrderMapper {
 	}
 	
 	public OrderItemDto to(OrderItem orderItem) {
-		var item = new OrderItemDto(orderItem.getId(), orderItem.getQuantity());
-		// TODO: consultar valor no contexto de Menu
-		// item.setItemValue(orderItem.getItemValue());
-		return item;
+		return new OrderItemDto(orderItem.getId(), orderItem.getQuantity());
 	}
 	
 	public Order from(OrderDto orderDto) {

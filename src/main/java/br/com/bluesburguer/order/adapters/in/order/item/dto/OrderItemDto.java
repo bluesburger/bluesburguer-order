@@ -18,6 +18,4 @@ public class OrderItemDto {
 	@NotNull
 	@NonNull
 	private Integer quantity;
-	
-	private Double itemValue;
 }

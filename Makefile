@@ -1,37 +1,43 @@
-install: up create-queues defining-dead-letter-queue-rule starting-message-move-task list-queues
+install: down up
+
+down-all: down down-local sonarqube-down
 
 up:
 	@ echo Up service
 	@ docker compose up -d --build
-
-create-queues:
-	@ echo Creating queues
-	@ docker compose exec localstack awslocal sqs create-queue --queue-name localstack-queue.fifo --attributes "FifoQueue=true" \
-		--output text --color auto
-	@ docker compose exec localstack awslocal sqs create-queue --queue-name localstack-queue-dead-letter \
-		--output text --color auto
-	@ docker compose exec localstack awslocal sqs create-queue --queue-name localstack-queue-recovery \
-		--output text --color auto
-
-defining-dead-letter-queue-rule:
-	@ echo Defining Dead Letter Queue Attributes
-	@ docker compose exec localstack awslocal sqs set-queue-attributes \
-		--queue-url http://sqs.us-east-1.localhost.localstack.cloud:4566/000000000000/localstack-queue.fifo \
-		--attributes '{ "RedrivePolicy": "{\"deadLetterTargetArn\":\"arn:aws:sqs:us-east-1:000000000000:localstack-queue-dead-letter\",\"maxReceiveCount\":\"1\"}" }' \
-		--output text
-
-starting-message-move-task:
-	@ echo Starting Message Move Task
-	@ docker compose exec localstack awslocal sqs start-message-move-task \
-        --source-arn arn:aws:sqs:us-east-1:000000000000:localstack-queue-dead-letter \
-        --destination-arn arn:aws:sqs:us-east-1:000000000000:localstack-queue-recovery \
-		--output text
-
-list-queues:
-	@ echo Showing existant queues
-	@ docker compose exec localstack awslocal sqs list-queues \
-		--output text
-
+	
+up-local:
+	@ echo Up service
+	@ docker compose -f docker-compose-local.yml up -d	
+	
+up-local-app:
+	@ echo Up service
+	@ docker compose -f docker-compose-local.yml up -d application
+	
 down:
 	@ echo Down services
-	@ docker compose down
+	@ docker compose down --volumes --remove-orphans
+	
+down-local:
+	@ echo Down services
+	@ docker compose -f docker-compose-local.yml down --volumes --remove-orphans
+	
+down-local-app:
+	@ echo Down application container
+	@ docker compose -f docker-compose-local.yml down application --volumes --remove-orphans
+
+sonarqube-up:
+	@ docker compose -f sonarqube.yml up -d
+
+sonarqube-down:
+	@ docker compose -f sonarqube.yml down --volumes --remove-orphans
+	
+sonarqube-status:
+	@ docker compose -f sonarqube.yml ps
+
+sonarqube-scanner:
+	@ mvnw clean verify sonar:sonar \
+  		-Dsonar.projectKey=Orderingsystem \
+  		-Dsonar.projectName='OrderApi' \
+  		-Dsonar.host.url=http://127.0.0.1:9000 \
+  		-Dsonar.token=sqp_251d910e55a9ea46dceb2443cc67a3d270790dfd
