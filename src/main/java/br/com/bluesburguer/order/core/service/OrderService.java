@@ -55,9 +55,9 @@ public class OrderService implements OrderPort {
 
 	public Optional<OrderItem> getItemById(Long orderItemId) {
 		try {
-			return Optional.of(orderItemRepository.getReferenceById(orderItemId));
+			return Optional.ofNullable(orderItemRepository.getReferenceById(orderItemId));
 		} catch (EntityNotFoundException e) {
-			log.error("", e);
+			log.error("Pedido não encontrado", e);
 			return Optional.empty();
 		}
 	}
@@ -66,13 +66,11 @@ public class OrderService implements OrderPort {
 			rollbackOn = IllegalArgumentException.class, 
 			dontRollbackOn = EntityExistsException.class)
 	public Optional<Order> createNewOrder(OrderRequest command) {
-		var newOrder = new Order();
-		newOrder.setFase(OrderFase.PENDING);
-		
 		var orderUser = Optional.ofNullable(command.getUser())
 				.map(userService::saveIfNotExist)
 				.orElse(userService.createAnonymous());
-		newOrder.setUser(orderUser);
+		
+		var newOrder = new Order(OrderFase.PENDING, orderUser);
 		
 		var savedOrder = orderRepository.save(newOrder);
 		command.getItems().stream()
@@ -133,7 +131,7 @@ public class OrderService implements OrderPort {
 	@Transactional(
 			rollbackOn = IllegalArgumentException.class, 
 			dontRollbackOn = EntityExistsException.class)
-	public void delete(Long orderId) {
+	public void deleteById(Long orderId) {
 		var order = getById(orderId).orElseThrow(() -> new IllegalArgumentException("Pedido não encontrado"));
 		orderItemRepository.deleteAllByOrderId(orderId);
 		orderRepository.delete(order);

@@ -8,13 +8,14 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import br.com.bluesburguer.order.adapters.in.order.item.dto.OrderItemRequest;
 import br.com.bluesburguer.order.adapters.in.user.dto.UserRequest;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class OrderRequest implements Serializable {
 	

@@ -21,6 +21,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Builder.Default;
@@ -32,7 +33,7 @@ import lombok.Setter;
 
 @Entity
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @RequiredArgsConstructor
 @AllArgsConstructor
 @Table(schema = "bluesburguer-order", name = "TB_ORDER")
@@ -71,7 +72,8 @@ public class Order implements Serializable {
     @OneToMany(mappedBy = "order")
     private List<OrderItem> items = new ArrayList<>();
     
-    @Setter
+    @NonNull
+    @NotNull
 	@ManyToOne
     @JoinColumn(name = "user_id")
 	private OrderUser user;

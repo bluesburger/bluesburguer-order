@@ -32,6 +32,12 @@ down-local-app:
 sonarqube-up:
 	@ docker compose -f sonarqube.yml up -d
 
+sonarqube-status:
+	@ docker compose -f sonarqube.yml ps
+	
+sonarqube-logs:
+	@ docker compose -f sonarqube.yml logs -f
+	
 sonarqube-down:
 	@ docker compose -f sonarqube.yml down --volumes
 

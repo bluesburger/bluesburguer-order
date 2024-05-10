@@ -19,20 +19,15 @@ public class OrderMapper {
 	private final UserMapper userAssembler;
 
 	public OrderDto to(Order order) {
-		var dto = new OrderDto();
-		dto.setFase(order.getFase());
-		dto.setId(order.getId()); 
-		dto.setStep(order.getStep());
-		order.getItems().forEach(item -> 
-			dto.getItems().add(this.to(item))
-		);
+		var items = order.getItems().stream().map(item -> this.to(item)).toList();
 		
-		dto.setUser(Optional.ofNullable(order.getUser())
+		var userDto = Optional.ofNullable(order.getUser())
 			.map(user -> new UserDto(user.getId(), 
 					Optional.ofNullable(user.getCpf()).orElse(null), 
 					user.getEmail()))
-			.orElseThrow(() -> new RuntimeException("Usuário não definido")));
-		return dto;
+			.orElseThrow(() -> new RuntimeException("Usuário não definido"));
+		
+		return new OrderDto(order.getId(), order.getStep(), order.getFase(), items, userDto);
 	}
 	
 	public OrderItemDto to(OrderItem orderItem) {
@@ -43,8 +38,7 @@ public class OrderMapper {
 		var user = Optional.ofNullable(orderDto.getUser())
 				.map(userAssembler::from)
 				.orElse(null);
-		var order = new Order(orderDto.getFase());
-		order.setUser(user);
+		var order = new Order(orderDto.getFase(), user);
 		var items = orderDto.getItems().stream()
 			.map(itemDto -> {
 				var item = new OrderItem();

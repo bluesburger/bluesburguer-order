@@ -28,7 +28,7 @@ public interface OrderPort {
 	
 	OrderItem saveItem(OrderItemRequest itemRequest, Order order);
 	
-	void delete(Long orderId);
+	void deleteById(Long orderId);
 	
 	OrderItem addItem(OrderItem item);
 }
