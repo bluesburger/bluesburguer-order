@@ -19,6 +19,11 @@
 	<properties>
 		<java.version>17</java.version>
 		<spring.cloud.version>2021.0.6</spring.cloud.version>
+	    <jacoco.version>0.8.12</jacoco.version>
+	    <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+	    <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+	    <sonar.language>java</sonar.language>
+	    <sonar.token>${env.SONAR_TOKEN}</sonar.token>
 	</properties>
 	
 	<dependencies>
@@ -150,6 +155,13 @@
 			<groupId>org.testcontainers</groupId>
 			<artifactId>junit-jupiter</artifactId>
 		</dependency>
+		
+		<!-- Jacoco Reports -->
+		<dependency>
+		    <groupId>org.jacoco</groupId> 
+		    <artifactId>jacoco-maven-plugin</artifactId>
+		    <version>${jacoco.version}</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -165,6 +177,26 @@
 						</exclude>
 					</excludes>
 				</configuration>
+			</plugin>
+			<plugin>
+			    <groupId>org.jacoco</groupId>
+			    <artifactId>jacoco-maven-plugin</artifactId>
+			    <version>${jacoco.version}</version>
+			    <executions>
+			        <execution>
+			            <id>jacoco-initialize</id>
+			            <goals>
+			                <goal>prepare-agent</goal>
+			            </goals>
+			        </execution>
+			        <execution>
+			            <id>jacoco-site</id>
+			            <phase>package</phase>
+			            <goals>
+			                <goal>report</goal>
+			            </goals>
+			        </execution>
+			    </executions>
 			</plugin>
 		</plugins>
 	</build>
