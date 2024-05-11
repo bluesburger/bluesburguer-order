@@ -1,7 +1,6 @@
 package br.com.bluesburguer.order.core.service;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -9,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import br.com.bluesburguer.order.adapters.in.order.dto.OrderRequest;
 import br.com.bluesburguer.order.adapters.in.order.item.dto.OrderItemRequest;
+import br.com.bluesburguer.order.adapters.out.OrderNotFoundException;
 import br.com.bluesburguer.order.adapters.out.persistence.entities.Order;
 import br.com.bluesburguer.order.adapters.out.persistence.entities.OrderItem;
 import br.com.bluesburguer.order.adapters.out.persistence.repository.OrderItemRepository;
@@ -22,10 +22,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-/***
- * 
- * FIXME: trocar IllegalArgumentException para uma exceção específica, que retorne 404
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -106,7 +102,7 @@ public class OrderService implements OrderPort {
 	@Transactional(
 			rollbackOn = IllegalArgumentException.class, 
 			dontRollbackOn = EntityExistsException.class)
-	public Optional<Order> update(Long orderId, List<OrderItemRequest> orderItems) {
+	public Optional<Order> updateOrderItems(Long orderId, List<OrderItemRequest> orderItems) {
 		return getById(orderId)
 				.map(order -> {
 					orderItemRepository.deleteAllByOrderId(order.getId());
@@ -118,7 +114,7 @@ public class OrderService implements OrderPort {
 	}
 	
 	@Transactional(
-			rollbackOn = IllegalArgumentException.class, 
+			rollbackOn = OrderNotFoundException.class, 
 			dontRollbackOn = EntityExistsException.class)
 	public OrderItem saveItem(OrderItemRequest itemRequest, Order order) {
 		var item = new OrderItem();
@@ -129,21 +125,20 @@ public class OrderService implements OrderPort {
 	}
 
 	@Transactional(
-			rollbackOn = IllegalArgumentException.class, 
+			rollbackOn = OrderNotFoundException.class, 
 			dontRollbackOn = EntityExistsException.class)
 	public void deleteById(Long orderId) {
-		var order = getById(orderId).orElseThrow(() -> new IllegalArgumentException("Pedido não encontrado"));
+		var order = getById(orderId).orElseThrow(OrderNotFoundException::new);
 		orderItemRepository.deleteAllByOrderId(orderId);
 		orderRepository.delete(order);
 	}
 
 	@Transactional(
-			rollbackOn = IllegalArgumentException.class, 
+			rollbackOn = OrderNotFoundException.class, 
 			dontRollbackOn = EntityExistsException.class)
 	public OrderItem addItem(OrderItem item) {
-		if (Objects.isNull(item.getOrder())) {
-			throw new IllegalArgumentException("Item necessita de uma ordem");
-		}
-		return orderItemRepository.save(item);
+		return Optional.ofNullable(item.getOrder())
+				.map(o -> orderItemRepository.save(item))
+				.orElseThrow(OrderNotFoundException::new);
 	}
 }

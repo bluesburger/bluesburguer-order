@@ -30,9 +30,11 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Getter
+@ToString
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @RequiredArgsConstructor
 @AllArgsConstructor

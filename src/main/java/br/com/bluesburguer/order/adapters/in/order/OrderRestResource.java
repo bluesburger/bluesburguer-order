@@ -73,7 +73,7 @@ public class OrderRestResource {
 	
 	@PutMapping(value = "/{orderId}")
 	public OrderDto updateOrderItems(@PathVariable Long orderId, @Valid @RequestBody List<OrderItemRequest> orderItems) {
-		return orderService.update(orderId, orderItems)
+		return orderService.updateOrderItems(orderId, orderItems)
 				.map(orderMapper::to)
 				.orElseThrow(OrderNotFoundException::new);
 	}

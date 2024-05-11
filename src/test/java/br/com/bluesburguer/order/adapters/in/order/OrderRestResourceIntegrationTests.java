@@ -168,7 +168,7 @@ class OrderRestResourceIntegrationTests extends ApplicationIntegrationSupport {
 			var order = OrderMocks.order(orderId);
 			
 			doReturn(Optional.of(order))
-				.when(orderService).update(anyLong(), anyList());
+				.when(orderService).updateOrderItems(anyLong(), anyList());
 			
 			mockMvc
 					.perform(put("/api/order/{orderId}", orderId)
@@ -190,7 +190,7 @@ class OrderRestResourceIntegrationTests extends ApplicationIntegrationSupport {
 		void givenUnexistantOrder_WhenMockMVCPut_thenReturnUpdatedOrder() throws Exception {
 			long orderId = 1L;
 			doReturn(Optional.empty())
-				.when(orderService).update(anyLong(), anyList());
+				.when(orderService).updateOrderItems(anyLong(), anyList());
 			
 			mockMvc
 					.perform(put("/api/order/{orderId}", orderId)
