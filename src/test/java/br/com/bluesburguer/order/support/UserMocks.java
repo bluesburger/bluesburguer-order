@@ -3,6 +3,7 @@ package br.com.bluesburguer.order.support;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import br.com.bluesburguer.order.adapters.in.user.dto.UserDto;
 import br.com.bluesburguer.order.adapters.in.user.dto.UserRequest;
 import br.com.bluesburguer.order.adapters.out.persistence.entities.Order;
 import br.com.bluesburguer.order.adapters.out.persistence.entities.OrderUser;
@@ -40,5 +41,9 @@ public class UserMocks {
 
 	public static Email email() {
 		return new Email(EMAIL);
+	}
+
+	public static UserDto userDto() {
+		return new UserDto(1L, CPF, EMAIL);
 	}
 }

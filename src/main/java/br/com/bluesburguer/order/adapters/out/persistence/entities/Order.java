@@ -45,6 +45,7 @@ public class Order implements Serializable {
 	private static final long serialVersionUID = 4781858089323528412L;
 
 	@Id
+	@Setter
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -53,10 +54,6 @@ public class Order implements Serializable {
 
     @UpdateTimestamp
     private LocalDateTime updatedTime;
-
-    @Default
-    @NotNull
-    private Double totalValue = 0D;
     
     @Setter
     @Default

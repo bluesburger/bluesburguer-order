@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.com.bluesburguer.order.adapters.in.order.dto.OrderDto;
+import br.com.bluesburguer.order.adapters.in.order.item.dto.OrderItemDto;
 import br.com.bluesburguer.order.adapters.out.persistence.entities.Order;
 import br.com.bluesburguer.order.adapters.out.persistence.entities.OrderItem;
 import br.com.bluesburguer.order.adapters.out.persistence.entities.OrderUser;
@@ -56,17 +58,29 @@ public class OrderMocks {
 	}
 	
 	public static Order order(long orderId) {
+		var user = new OrderUser(1L, OrderMocks.mockCpf(), OrderMocks.mockEmail(), LocalDateTime.now(), List.of());
+		return order(orderId, user);
+	}
+	
+	public static Order order(long orderId, OrderUser user) {
 		var step = OrderStep.KITCHEN;
 		var fase = OrderFase.PENDING;
-		var user = new OrderUser(1L, OrderMocks.mockCpf(), OrderMocks.mockEmail(), LocalDateTime.now(), List.of());
 		
 		var createdTime = LocalDateTime.now();
 		var updatedTime = LocalDateTime.now();
 		List<OrderItem> items = new ArrayList<>();
-		return new Order(orderId, createdTime, updatedTime, 0D, step, fase, items, user);
+		return new Order(orderId, createdTime, updatedTime, step, fase, items, user);
 	}
 	
 	public static OrderItem orderItem(long orderItem, Order order) {
 		return new OrderItem(1L, order, 1, LocalDateTime.now(), LocalDateTime.now());
+	}
+
+	public static OrderDto orderDto(long orderId) {
+		var step = OrderStep.KITCHEN;
+		var fase = OrderFase.PENDING;
+		var items = List.of(new OrderItemDto(1L, 1));
+		var user = UserMocks.userDto();
+		return new OrderDto(orderId, step, fase, items, user);
 	}
 }
