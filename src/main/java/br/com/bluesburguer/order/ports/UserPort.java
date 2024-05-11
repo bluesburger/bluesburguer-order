@@ -18,7 +18,5 @@ public interface UserPort {
 	
 	OrderUser saveIfNotExist(Cpf cpf, Email email);
 	
-	OrderUser createIdentifiedUser(Cpf cpf, Email email);
-	
-	OrderUser createAnonymous();
+	OrderUser createUser(Cpf cpf, Email email);
 }

@@ -29,6 +29,7 @@ import br.com.bluesburguer.order.adapters.out.persistence.repository.OrderReposi
 import br.com.bluesburguer.order.core.domain.OrderFase;
 import br.com.bluesburguer.order.core.domain.OrderStep;
 import br.com.bluesburguer.order.support.OrderMocks;
+import br.com.bluesburguer.order.support.UserMocks;
 
 @ExtendWith(MockitoExtension.class)
 class OrderServiceUnitTests {
@@ -164,9 +165,9 @@ class OrderServiceUnitTests {
 		@Test
 		void givenNewOrderRequest_WhenSaveNewOrderForExistantUser_ThenShouldReturnSavedOrder() {
 			var order = OrderMocks.order(1L);
-			var userRequest = OrderMocks.userRequest();
+			var userRequest = UserMocks.userRequest();
 			
-			doReturn(OrderMocks.user())
+			doReturn(UserMocks.user())
 				.when(userService).saveIfNotExist(userRequest);
 			
 			doReturn(order)
@@ -229,7 +230,7 @@ class OrderServiceUnitTests {
 			doReturn(Optional.empty())
 				.when(orderRepository).findById(orderId);
 			
-			var updatedOrder = new Order(fase, OrderMocks.user());
+			var updatedOrder = new Order(fase, UserMocks.user());
 			updatedOrder.setStep(step);
 			
 			assertThat(orderService.updateStepAndFase(orderId, step, fase))
@@ -308,7 +309,7 @@ class OrderServiceUnitTests {
 			doReturn(Optional.empty())
 				.when(orderRepository).findById(orderId);
 			
-			var updatedOrder = new Order(fase, OrderMocks.user());
+			var updatedOrder = new Order(fase, UserMocks.user());
 			
 			assertThat(orderService.updateFase(orderId, fase))
 				.isNotPresent();

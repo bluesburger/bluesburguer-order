@@ -4,12 +4,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.com.bluesburguer.order.adapters.in.user.dto.UserRequest;
 import br.com.bluesburguer.order.adapters.out.persistence.entities.Order;
 import br.com.bluesburguer.order.adapters.out.persistence.entities.OrderItem;
 import br.com.bluesburguer.order.adapters.out.persistence.entities.OrderUser;
-import br.com.bluesburguer.order.core.domain.Cpf;
-import br.com.bluesburguer.order.core.domain.Email;
 import br.com.bluesburguer.order.core.domain.OrderFase;
 import br.com.bluesburguer.order.core.domain.OrderStep;
 import lombok.AccessLevel;
@@ -71,13 +68,5 @@ public class OrderMocks {
 	
 	public static OrderItem orderItem(long orderItem, Order order) {
 		return new OrderItem(1L, order, 1, LocalDateTime.now(), LocalDateTime.now());
-	}
-
-	public static OrderUser user() {
-		return new OrderUser(1L, CPF, EMAIL, null, List.of());
-	}
-	
-	public static UserRequest userRequest() {
-		return new UserRequest(1L, new Cpf(CPF), new Email(EMAIL));
 	}
 }

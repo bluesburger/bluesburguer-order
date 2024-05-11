@@ -40,34 +40,27 @@ public class UserService implements UserPort {
 	@Override
 	public OrderUser saveIfNotExist(Cpf cpf, Email email) {
 		
-		Optional<OrderUser> userOptional = Optional.empty();
 		if (Objects.nonNull(cpf)) {
-			userOptional = userRepository.findByCpf(cpf.getValue());
+			var userOptional = userRepository.findByCpf(cpf.getValue());
 			if (userOptional.isPresent()) {
 				return userOptional.get();
 			}
 		}
 		
-		if (userOptional.isEmpty() && Objects.nonNull(email)) {
-			userOptional = userRepository.findByEmail(email.getValue());
+		if (Objects.nonNull(email)) {
+			var userOptional = userRepository.findByEmail(email.getValue());
 			if (userOptional.isPresent()) {
 				return userOptional.get();
 			}
 		}
-		return createIdentifiedUser(cpf, email);
+		return createUser(cpf, email);
 	}
 	
 	@Override
-	public OrderUser createIdentifiedUser(Cpf cpf, Email email) {
+	public OrderUser createUser(Cpf cpf, Email email) {
 		var newUser = new OrderUser();
-		newUser.setCpf(cpf.getValue());
-		newUser.setEmail(email.getValue());
-		return userRepository.save(newUser);
-	}
-
-	@Override
-	public OrderUser createAnonymous() {
-		var newUser = new OrderUser();
+		newUser.setCpf(Optional.ofNullable(cpf).map(Cpf::getValue).orElse(null));
+		newUser.setEmail(Optional.ofNullable(email).map(Email::getValue).orElse(null));
 		return userRepository.save(newUser);
 	}
 }

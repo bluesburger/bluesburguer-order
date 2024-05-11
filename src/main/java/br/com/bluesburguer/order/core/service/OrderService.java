@@ -56,7 +56,7 @@ public class OrderService implements OrderPort {
 	public Optional<Order> createNewOrder(OrderRequest command) {
 		var orderUser = Optional.ofNullable(command.getUser())
 				.map(userService::saveIfNotExist)
-				.orElse(userService.createAnonymous());
+				.orElse(userService.createUser(null, null));
 		
 		var newOrder = new Order(OrderFase.PENDING, orderUser);
 		
