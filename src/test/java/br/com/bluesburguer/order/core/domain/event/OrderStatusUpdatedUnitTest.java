@@ -12,7 +12,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import br.com.bluesburguer.order.core.domain.OrderFase;
 import br.com.bluesburguer.order.core.domain.OrderStatus;
 import br.com.bluesburguer.order.core.domain.OrderStep;
-import br.com.bluesburguer.order.core.domain.event.OrderStatusUpdated;
 
 class OrderStatusUpdatedUnitTest {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().findAndRegisterModules();    
