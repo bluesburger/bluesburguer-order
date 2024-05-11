@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import br.com.bluesburguer.order.adapters.in.order.item.dto.OrderItemDto;
 import br.com.bluesburguer.order.adapters.in.user.dto.UserDto;
 import br.com.bluesburguer.order.adapters.in.user.dto.UserMapper;
+import br.com.bluesburguer.order.adapters.out.UserNotFoundException;
 import br.com.bluesburguer.order.adapters.out.persistence.entities.Order;
 import br.com.bluesburguer.order.adapters.out.persistence.entities.OrderItem;
 import lombok.RequiredArgsConstructor;
@@ -19,13 +20,13 @@ public class OrderMapper {
 	private final UserMapper userAssembler;
 
 	public OrderDto to(Order order) {
-		var items = order.getItems().stream().map(item -> this.to(item)).toList();
+		var items = order.getItems().stream().map(this::to).toList();
 		
 		var userDto = Optional.ofNullable(order.getUser())
 			.map(user -> new UserDto(user.getId(), 
 					Optional.ofNullable(user.getCpf()).orElse(null), 
 					user.getEmail()))
-			.orElseThrow(() -> new RuntimeException("Usuário não definido"));
+			.orElseThrow(UserNotFoundException::new);
 		
 		return new OrderDto(order.getId(), order.getStep(), order.getFase(), items, userDto);
 	}
@@ -37,7 +38,7 @@ public class OrderMapper {
 	public Order from(OrderDto orderDto) {
 		var user = Optional.ofNullable(orderDto.getUser())
 				.map(userAssembler::from)
-				.orElse(null);
+				.orElseThrow(UserNotFoundException::new);
 		var order = new Order(orderDto.getFase(), user);
 		var items = orderDto.getItems().stream()
 			.map(itemDto -> {
