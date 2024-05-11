@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -30,7 +29,6 @@ import br.com.bluesburguer.order.adapters.out.persistence.repository.OrderReposi
 import br.com.bluesburguer.order.core.domain.OrderFase;
 import br.com.bluesburguer.order.core.domain.OrderStep;
 import br.com.bluesburguer.order.support.OrderMocks;
-import jakarta.persistence.EntityNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
 class OrderServiceUnitTests {
@@ -139,36 +137,25 @@ class OrderServiceUnitTests {
 		void givenOneExistantItem_WhenGetById_ThenShouldReturnExistantItem() {
 			long orderItemId = 2L;
 			var orderItem = OrderMocks.orderItem(orderItemId, null);
-			doReturn(orderItem)
-				.when(orderItemRepository).getReferenceById(orderItemId);
+			doReturn(Optional.of(orderItem))
+				.when(orderItemRepository).findById(orderItemId);
 			
 			assertThat(orderService.getItemById(orderItemId))
 				.isPresent()
 				.isEqualTo(Optional.of(orderItem));
 			
-			verify(orderItemRepository).getReferenceById(orderItemId);
+			verify(orderItemRepository).findById(orderItemId);
 		}
 		
 		@Test
 		void givenOneUnexistantOrder_WhenGetById_AndServerReturnsNull_ThenShouldReturnEmpty() {
 			long orderItemId = 3L;
-			doReturn(null)
-				.when(orderItemRepository).getReferenceById(orderItemId);
+			doReturn(Optional.empty())
+				.when(orderItemRepository).findById(orderItemId);
 			
 			assertThat(orderService.getItemById(orderItemId))
 				.isNotPresent();
-			verify(orderItemRepository).getReferenceById(orderItemId);
-		}
-		
-		@Test
-		void givenOneUnexistantOrder_WhenGetById_AndServerThrowsEntityNotFoundException_ThenShouldReturnEmpty() {
-			long orderItemId = 3L;
-			doThrow(new EntityNotFoundException("Key not found"))
-				.when(orderItemRepository).getReferenceById(orderItemId);
-			
-			assertThat(orderService.getItemById(orderItemId))
-				.isNotPresent();
-			verify(orderItemRepository).getReferenceById(orderItemId);
+			verify(orderItemRepository).findById(orderItemId);
 		}
 	}
 	

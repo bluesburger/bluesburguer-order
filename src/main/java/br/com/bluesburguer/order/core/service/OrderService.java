@@ -17,12 +17,9 @@ import br.com.bluesburguer.order.core.domain.OrderFase;
 import br.com.bluesburguer.order.core.domain.OrderStep;
 import br.com.bluesburguer.order.ports.OrderPort;
 import jakarta.persistence.EntityExistsException;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(Transactional.TxType.SUPPORTS)
@@ -50,12 +47,7 @@ public class OrderService implements OrderPort {
 	}
 
 	public Optional<OrderItem> getItemById(Long orderItemId) {
-		try {
-			return Optional.ofNullable(orderItemRepository.getReferenceById(orderItemId));
-		} catch (EntityNotFoundException e) {
-			log.error("Pedido não encontrado", e);
-			return Optional.empty();
-		}
+		return orderItemRepository.findById(orderItemId);
 	}
 
 	@Transactional(
