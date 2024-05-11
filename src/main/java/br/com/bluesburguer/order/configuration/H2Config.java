@@ -22,7 +22,7 @@ public class H2Config {
 	
     @Profile("dev")
     @Bean(initMethod = "start", destroyMethod = "stop")
-    public Server h2WebServer() throws SQLException {
+    Server h2WebServer() throws SQLException {
         return Server.createWebServer("-web", "-webAllowOthers", "-webPort", webPort,
         		"-properties", "~/.h2/" + webPort // Utilizando diretório customizado para salvar a URL de conexão no console web.
         );
@@ -30,13 +30,13 @@ public class H2Config {
 
     @Profile("dev")
     @Bean(initMethod = "start", destroyMethod = "stop")
-    public Server tcpServer() throws SQLException {
+    Server tcpServer() throws SQLException {
     	return Server.createTcpServer("-tcpPort", tcpPort, "-tcpAllowOthers");
     }
     
     @Profile("dev")
     @Bean(initMethod = "start", destroyMethod = "stop")
-    public Server h2PgServer() throws SQLException {
+    Server h2PgServer() throws SQLException {
         var pgParams = new String[] { "-pgAllowOthers", "-pgPort", pgPort };
         return Server.createPgServer(pgParams);
     }

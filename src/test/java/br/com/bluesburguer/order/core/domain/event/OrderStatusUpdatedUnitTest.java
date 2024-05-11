@@ -1,4 +1,4 @@
-package br.com.bluesburguer.orderingsystem.production.domain;
+package br.com.bluesburguer.order.core.domain.event;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
