@@ -30,5 +30,5 @@ public interface OrderPort {
 	
 	void deleteById(Long orderId);
 	
-	OrderItem addItem(OrderItem item);
+	OrderItem addItem(Long orderId, OrderItemRequest itemRequest);
 }

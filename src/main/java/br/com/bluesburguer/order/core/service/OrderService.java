@@ -128,9 +128,13 @@ public class OrderService implements OrderPort {
 	@Transactional(
 			rollbackOn = OrderNotFoundException.class, 
 			dontRollbackOn = EntityExistsException.class)
-	public OrderItem addItem(OrderItem item) {
-		return Optional.ofNullable(item.getOrder())
-				.map(o -> orderItemRepository.save(item))
+	public OrderItem addItem(Long orderId, OrderItemRequest itemRequest) {
+		return Optional.ofNullable(orderId)
+				.map(oId -> orderRepository.findById(oId).orElseThrow(OrderNotFoundException::new))
+				.map(order -> {
+					var item = new OrderItem(itemRequest.getId(), order, itemRequest.getQuantity(), null, null);
+					return orderItemRepository.save(item);
+				})
 				.orElseThrow(OrderNotFoundException::new);
 	}
 }

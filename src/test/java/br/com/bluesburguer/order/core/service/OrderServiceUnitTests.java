@@ -452,19 +452,24 @@ class OrderServiceUnitTests {
 			orderItemSaved.setId(2L);
 			
 			doReturn(orderItemSaved)
-				.when(orderItemRepository).save(orderItem);
+				.when(orderItemRepository).save(any(OrderItem.class));
 			
-			assertThat(orderService.addItem(orderItem))
+			doReturn(Optional.of(order))
+				.when(orderRepository).findById(1L);
+			
+			var itemRequest = new OrderItemRequest(orderItem.getId(), orderItem.getQuantity());
+			assertThat(orderService.addItem(order.getId(), itemRequest))
 				.hasFieldOrPropertyWithValue("id", orderItemSaved.getId());
 			
-			verify(orderItemRepository).save(orderItem);
+			verify(orderItemRepository).save(any(OrderItem.class));
 		}
 		
 		@Test
 		void givenUnexistantOrder_WhenAddItem_ThenShouldThrowsHandledException() {
 			var orderItem = OrderMocks.orderItem(1L, null);
 			
-			assertThrows(OrderNotFoundException.class, () -> orderService.addItem(orderItem), "Pedido não encontrado");
+			var itemRequest = new OrderItemRequest(orderItem.getId(), orderItem.getQuantity());
+			assertThrows(OrderNotFoundException.class, () -> orderService.addItem(null, itemRequest), "Pedido não encontrado");
 			
 			verify(orderItemRepository, never()).save(orderItem);
 		}

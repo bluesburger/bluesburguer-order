@@ -16,7 +16,6 @@ import br.com.bluesburguer.order.adapters.in.order.item.dto.OrderItemRequest;
 import br.com.bluesburguer.order.adapters.in.user.dto.UserRequest;
 import br.com.bluesburguer.order.adapters.out.OrderNotFoundException;
 import br.com.bluesburguer.order.adapters.out.persistence.entities.Order;
-import br.com.bluesburguer.order.adapters.out.persistence.entities.OrderItem;
 import br.com.bluesburguer.order.adapters.out.persistence.repository.OrderItemRepository;
 import br.com.bluesburguer.order.adapters.out.persistence.repository.OrderRepository;
 import br.com.bluesburguer.order.core.domain.Cpf;
@@ -388,8 +387,8 @@ class OrderServiceIntegrationTests extends ApplicationIntegrationSupport {
 			
 			validatePersistedOrder(createdOrder, step, fase, cpf, email);
 			
-			var item = new OrderItem(1L, createdOrder.get(), quantity, null, null);
-			assertThat(orderService.addItem(item))
+			var item = new OrderItemRequest(1L, quantity);
+			assertThat(orderService.addItem(createdOrder.get().getId(), item))
 				.hasFieldOrPropertyWithValue("id", 1L)
 				.hasFieldOrProperty("order")
 				.hasFieldOrPropertyWithValue("quantity", quantity)
@@ -399,8 +398,8 @@ class OrderServiceIntegrationTests extends ApplicationIntegrationSupport {
 		
 		@Test
 		void givenUnexistantOrder_WhenAddItem_ThenShouldThrowsHandledException() {
-			var item = new OrderItem(1L, null, 1, null, null);
-			assertThrows(OrderNotFoundException.class, () -> orderService.addItem(item), "Pedido não encontrado");
+			var item = new OrderItemRequest(1L, 1);
+			assertThrows(OrderNotFoundException.class, () -> orderService.addItem(null, item), "Pedido não encontrado");
 		}
 	}
 	
