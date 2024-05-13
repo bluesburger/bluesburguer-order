@@ -25,6 +25,7 @@
 	    <sonar.language>java</sonar.language>
 	    <sonar.token>${env.SONAR_TOKEN}</sonar.token>
 	    <sonar.exclusions>**/CucumberTest.java</sonar.exclusions>
+	    <sonar.sources>src/test/resources/features</sonar.sources>
 	</properties>
 	
 	<dependencies>
