@@ -26,6 +26,10 @@ import br.com.bluesburguer.order.adapters.out.OrderNotFoundException;
 import br.com.bluesburguer.order.core.domain.OrderFase;
 import br.com.bluesburguer.order.core.domain.OrderStep;
 import br.com.bluesburguer.order.core.service.OrderService;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -38,6 +42,11 @@ public class OrderRestResource {
 	
 	private final OrderMapper orderMapper;
 	
+	@ApiResponses(value = { 
+	  @ApiResponse(responseCode = "200", description = "List of orders", 
+	    content = { @Content(mediaType = "application/json", 
+	      schema = @Schema(implementation = OrderDto.class)) })
+	})
 	@GetMapping
 	public List<OrderDto> getAll() {
 		return orderService.getAll().stream()

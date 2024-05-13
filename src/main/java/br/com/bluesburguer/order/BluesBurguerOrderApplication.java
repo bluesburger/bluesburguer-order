@@ -10,7 +10,7 @@ import org.springframework.context.annotation.ComponentScan;
 */
 @SpringBootApplication
 @EnableDiscoveryClient
-@ComponentScan(basePackages = { "br.com.blusburguer" })
+@ComponentScan(basePackages = { "br.com.bluesburguer.order" })
 public class BluesBurguerOrderApplication {
 	
 	public static void main(String[] args) {
