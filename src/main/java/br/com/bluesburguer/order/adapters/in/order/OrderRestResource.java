@@ -59,7 +59,7 @@ public class OrderRestResource {
 				.toList();
 	}
 	
-	@PostMapping(consumes = { MediaType.APPLICATION_JSON_VALUE })
+	@PostMapping(consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	public ResponseEntity<URI> createNewOrder(@Valid @RequestBody OrderRequest orderRequest) {
 		return orderService.createNewOrder(orderRequest)
 				.map(orderMapper::to)

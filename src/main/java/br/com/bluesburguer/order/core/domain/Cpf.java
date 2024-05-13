@@ -11,9 +11,11 @@ import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @Getter
 @EqualsAndHashCode
+@RequiredArgsConstructor
 @Embeddable
 public class Cpf implements Serializable {
 

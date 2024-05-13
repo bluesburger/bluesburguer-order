@@ -18,6 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.List;
 import java.util.Optional;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -50,10 +51,14 @@ class OrderRestResourceIntegrationTests extends ApplicationIntegrationSupport {
 	private MockMvc mockMvc;
 	
 	@BeforeEach
-	public void setup() throws Exception {
+	void setup() throws Exception {
 	    this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
 	}
 	
+	@AfterEach
+	void tearDown() {
+		
+	}
 	
 	@Nested
 	class GetAll {
