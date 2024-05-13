@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Nested;
@@ -166,7 +167,7 @@ class OrderServiceIntegrationTests extends ApplicationIntegrationSupport {
 		
 		@Test
 		void givenOneUnexistantOrder_WhenGetById_ThenShouldReturnEmpty() {
-			long orderId = 99L;
+			var orderId = UUID.fromString("ddedf1ab-0b2f-4766-a9fc-104bedc98492");
 			assertThat(orderService.getById(orderId))
 				.isNotPresent();
 		}
@@ -251,7 +252,8 @@ class OrderServiceIntegrationTests extends ApplicationIntegrationSupport {
 		void givenUnexistantOrder_WhenUpdateStepAndFase_ThenShouldReturnEmpty() {
 			var newStep = OrderStep.KITCHEN;
 			var newFase = OrderFase.DONE;
-			assertThat(orderService.updateStepAndFase(99L, newStep, newFase))
+			var orderId = UUID.fromString("ddedf1ab-0b2f-4766-a9fc-104bedc98492");
+			assertThat(orderService.updateStepAndFase(orderId, newStep, newFase))
 				.isNotPresent();
 		}
 	}
@@ -285,7 +287,8 @@ class OrderServiceIntegrationTests extends ApplicationIntegrationSupport {
 		@Test
 		void givenUnexistantOrder_WhenUpdateFase_ThenShouldReturnEmpty() {
 			var newFase = OrderFase.IN_PROGRESS;
-			assertThat(orderService.updateFase(97L, newFase))
+			var orderId = UUID.fromString("ddedf1ab-0b2f-4766-a9fc-104bedc98492");
+			assertThat(orderService.updateFase(orderId, newFase))
 				.isNotPresent();
 		}
 	}
@@ -322,7 +325,8 @@ class OrderServiceIntegrationTests extends ApplicationIntegrationSupport {
 		@Test
 		void givenUnexistantOrder_WhenUpdateOrderItems_ThenShouldReturnEmpty() {
 			var orderItems = List.of(new OrderItemRequest(1L, 1));
-			assertThat(orderService.updateOrderItems(96L, orderItems))
+			var orderId = UUID.fromString("ddedf1ab-0b2f-4766-a9fc-104bedc98492");
+			assertThat(orderService.updateOrderItems(orderId, orderItems))
 				.isNotPresent();
 		}
 	}
@@ -368,7 +372,8 @@ class OrderServiceIntegrationTests extends ApplicationIntegrationSupport {
 		
 		@Test
 		void givenUnexistantOrder_WhenDeleteById_ThenShouldThrows() {
-			assertThrows(OrderNotFoundException.class, () -> orderService.deleteById(96L), "Pedido não encontrado");
+			var orderId = UUID.fromString("ddedf1ab-0b2f-4766-a9fc-104bedc98492");
+			assertThrows(OrderNotFoundException.class, () -> orderService.deleteById(orderId), "Pedido não encontrado");
 		}
 	}
 	

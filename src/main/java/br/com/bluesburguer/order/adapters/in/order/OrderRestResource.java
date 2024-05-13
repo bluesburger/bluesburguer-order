@@ -2,6 +2,7 @@ package br.com.bluesburguer.order.adapters.in.order;
 
 import java.net.URI;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -45,7 +46,7 @@ public class OrderRestResource {
 	}
 
 	@GetMapping("/{orderId}")
-	public OrderDto getById(@PathVariable Long orderId) {
+	public OrderDto getById(@PathVariable UUID orderId) {
 		return orderService.getById(orderId)
 			.map(orderMapper::to)
 			.orElseThrow(OrderNotFoundException::new);
@@ -72,28 +73,28 @@ public class OrderRestResource {
 	}
 	
 	@PutMapping(value = "/{orderId}")
-	public OrderDto updateOrderItems(@PathVariable Long orderId, @Valid @RequestBody List<OrderItemRequest> orderItems) {
+	public OrderDto updateOrderItems(@PathVariable UUID orderId, @Valid @RequestBody List<OrderItemRequest> orderItems) {
 		return orderService.updateOrderItems(orderId, orderItems)
 				.map(orderMapper::to)
 				.orElseThrow(OrderNotFoundException::new);
 	}
 	
 	@PutMapping(value = "/{orderId}/{step}/{fase}")
-	public OrderDto updateStepAndFase(@PathVariable Long orderId, @PathVariable OrderStep step, @PathVariable OrderFase fase) {
+	public OrderDto updateStepAndFase(@PathVariable UUID orderId, @PathVariable OrderStep step, @PathVariable OrderFase fase) {
 		return orderService.updateStepAndFase(orderId, step, fase)
 				.map(orderMapper::to)
 				.orElseThrow(OrderNotFoundException::new);
 	}
 	
 	@PutMapping(value = "/{orderId}/{fase}")
-	public OrderDto updateFase(@PathVariable Long orderId, @PathVariable OrderFase fase) {
+	public OrderDto updateFase(@PathVariable UUID orderId, @PathVariable OrderFase fase) {
 		return orderService.updateFase(orderId, fase)
 				.map(orderMapper::to)
 				.orElseThrow(OrderNotFoundException::new);
 	}
 	
 	@DeleteMapping("/{orderId}")
-	public ResponseEntity<Void> deleteById(@PathVariable Long orderId) {
+	public ResponseEntity<Void> deleteById(@PathVariable UUID orderId) {
 		orderService.deleteById(orderId);
 		return ResponseEntity.noContent().build();
 	}

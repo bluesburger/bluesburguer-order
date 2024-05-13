@@ -1,6 +1,7 @@
 package br.com.bluesburguer.order.adapters.out.persistence.repository;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -10,5 +11,5 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
 	
 	Optional<OrderItem> findByOrderItemId(long orderItemId);
 
-	void deleteAllByOrderId(Long orderId);
+	void deleteAllByOrderId(UUID orderId);
 }

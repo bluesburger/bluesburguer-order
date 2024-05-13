@@ -2,6 +2,7 @@ package br.com.bluesburguer.order.core.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 import org.springframework.stereotype.Service;
@@ -42,7 +43,7 @@ public class OrderService implements OrderPort {
 		return orderRepository.findAllByStepAndFaseInOrderByCreatedTime(step, fases);
 	}
 
-	public Optional<Order> getById(Long orderId) {
+	public Optional<Order> getById(UUID orderId) {
 		return orderRepository.findById(orderId);
 	}
 	
@@ -75,7 +76,7 @@ public class OrderService implements OrderPort {
 	@Transactional(
 			rollbackOn = IllegalArgumentException.class, 
 			dontRollbackOn = EntityExistsException.class)
-	public Optional<Order> updateStepAndFase(Long orderId, OrderStep step, OrderFase fase) {
+	public Optional<Order> updateStepAndFase(UUID orderId, OrderStep step, OrderFase fase) {
 		return getById(orderId)
 			.map(order -> {
 				order.setStep(step);
@@ -87,7 +88,7 @@ public class OrderService implements OrderPort {
 	@Transactional(
 			rollbackOn = IllegalArgumentException.class, 
 			dontRollbackOn = EntityExistsException.class)
-	public Optional<Order> updateFase(Long orderId, OrderFase fase) {
+	public Optional<Order> updateFase(UUID orderId, OrderFase fase) {
 		return getById(orderId)
 			.map(order -> {
 				order.setFase(fase);
@@ -98,7 +99,7 @@ public class OrderService implements OrderPort {
 	@Transactional(
 			rollbackOn = IllegalArgumentException.class, 
 			dontRollbackOn = EntityExistsException.class)
-	public Optional<Order> updateOrderItems(Long orderId, List<OrderItemRequest> orderItems) {
+	public Optional<Order> updateOrderItems(UUID orderId, List<OrderItemRequest> orderItems) {
 		return getById(orderId)
 				.map(order -> {
 					orderItemRepository.deleteAllByOrderId(order.getId());
@@ -121,7 +122,7 @@ public class OrderService implements OrderPort {
 	@Transactional(
 			rollbackOn = OrderNotFoundException.class, 
 			dontRollbackOn = EntityExistsException.class)
-	public void deleteById(Long orderId) {
+	public void deleteById(UUID orderId) {
 		var order = getById(orderId).orElseThrow(OrderNotFoundException::new);
 		orderItemRepository.deleteAllByOrderId(orderId);
 		orderRepository.delete(order);
@@ -130,7 +131,7 @@ public class OrderService implements OrderPort {
 	@Transactional(
 			rollbackOn = OrderNotFoundException.class, 
 			dontRollbackOn = EntityExistsException.class)
-	public OrderItem addItem(Long orderId, OrderItemRequest itemRequest) {
+	public OrderItem addItem(UUID orderId, OrderItemRequest itemRequest) {
 		return Optional.ofNullable(orderId)
 				.map(oId -> orderRepository.findById(oId).orElseThrow(OrderNotFoundException::new))
 				.map(order -> {

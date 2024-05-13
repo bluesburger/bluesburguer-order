@@ -2,15 +2,20 @@ package br.com.bluesburguer.order.adapters.out;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.UUID;
+
 import org.junit.jupiter.api.Test;
 
 import br.com.bluesburguer.order.support.OrderMocks;
 
 class OrderUnitTests {
+	
+	private static final UUID ORDER_ID = UUID.fromString("ddedf1ab-0b2f-4766-a9fc-104bedc98492");
 
 	@Test
 	void givenOrderInstance_WhenAddOrderItem_ThenShouldHaveItemAdded() {
-		var order = OrderMocks.order(1L);
+		
+		var order = OrderMocks.order(ORDER_ID);
 		var item = OrderMocks.orderItem(1L, order);
 		
 		order.add(item);
@@ -21,7 +26,7 @@ class OrderUnitTests {
 	
 	@Test
 	void givenOrderInstance_WhenRemoveOrderItem_ThenShouldHaveItemRemoved() {
-		var order = OrderMocks.order(1L);
+		var order = OrderMocks.order(ORDER_ID);
 		var item = OrderMocks.orderItem(1L, order);
 		var item2 = OrderMocks.orderItem(2L, order);
 		

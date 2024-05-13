@@ -2,6 +2,7 @@ package br.com.bluesburguer.order.adapters.in.order.dto;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
@@ -28,7 +29,7 @@ import lombok.ToString;
 @AllArgsConstructor
 public class OrderDto {
 
-	private Long id;
+	private UUID id;
 	
 	private OrderStep step;
 	

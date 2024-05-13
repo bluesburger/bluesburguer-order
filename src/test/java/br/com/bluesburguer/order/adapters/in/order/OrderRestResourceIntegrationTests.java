@@ -5,7 +5,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doReturn;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -17,6 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,6 +41,9 @@ import br.com.bluesburguer.order.support.ApplicationIntegrationSupport;
 import br.com.bluesburguer.order.support.OrderMocks;
 
 class OrderRestResourceIntegrationTests extends ApplicationIntegrationSupport {
+	
+	private static final UUID EXISTANT_ORDER_ID = UUID.fromString("749699dd-0fff-4741-8807-14d9e556f728");
+	private static final UUID UNEXISTANT_ORDER_ID = UUID.fromString("b4d3f760-761f-4e07-8610-ebe389684e6d");
 
 	@Autowired
 	private WebApplicationContext webApplicationContext;
@@ -80,14 +83,14 @@ class OrderRestResourceIntegrationTests extends ApplicationIntegrationSupport {
 	
 		@Test
 		void givenOneExistantOrderwhenMockMVCGetById_thenReturnExistantOrder() throws Exception {
-			var order = OrderMocks.order(1L);
+			var order = OrderMocks.order(EXISTANT_ORDER_ID);
 			doReturn(Optional.of(order))
 				.when(orderService).getById(order.getId());
 			
 			mockMvc
 					.perform(get("/api/order/{orderId}", order.getId()))
 				    .andExpect(status().isOk())
-				    .andExpect(jsonPath("$.id", is(1)))
+				    .andExpect(jsonPath("$.id", is(EXISTANT_ORDER_ID.toString())))
 				    .andExpect(jsonPath("$.step", is("KITCHEN")))
 				    .andExpect(jsonPath("$.fase", is("PENDING")))
 				    .andExpect(jsonPath("$.items", hasSize(0)))
@@ -99,12 +102,11 @@ class OrderRestResourceIntegrationTests extends ApplicationIntegrationSupport {
 		
 		@Test
 		void givenUnexistantOrder_WhenMockMVCGetById_thenReturnNotFoundStatus() throws Exception {
-			long orderId = 2L;
 			doReturn(Optional.empty())
-				.when(orderService).getById(orderId);
+				.when(orderService).getById(UNEXISTANT_ORDER_ID);
 			
 			mockMvc
-					.perform(get("/api/order/{orderId}", orderId))
+					.perform(get("/api/order/{orderId}", UNEXISTANT_ORDER_ID))
 	//			    .andDo(print())
 				    .andExpect(status().isNotFound())
 				    .andExpect(result -> assertThat(result.getResolvedException()).isInstanceOf(OrderNotFoundException.class))
@@ -137,7 +139,8 @@ class OrderRestResourceIntegrationTests extends ApplicationIntegrationSupport {
 	
 		@Test
 		void givenNewOrder_WhenMockMVCPost_thenReturnURICreated() throws Exception {
-			doReturn(Optional.of(OrderMocks.order(1L)))
+			var orderId = UUID.fromString("ddedf1ab-0b2f-4766-a9fc-104bedc98492");
+			doReturn(Optional.of(OrderMocks.order(orderId)))
 				.when(orderService).createNewOrder(any(OrderRequest.class));
 			
 			mockMvc
@@ -169,19 +172,18 @@ class OrderRestResourceIntegrationTests extends ApplicationIntegrationSupport {
 	
 		@Test
 		void givenExistantOrder_WhenMockMVCPut_thenReturnUpdatedOrder() throws Exception {
-			long orderId = 1L;
-			var order = OrderMocks.order(orderId);
+			var order = OrderMocks.order(EXISTANT_ORDER_ID);
 			
 			doReturn(Optional.of(order))
-				.when(orderService).updateOrderItems(anyLong(), anyList());
+				.when(orderService).updateOrderItems(any(UUID.class), anyList());
 			
 			mockMvc
-					.perform(put("/api/order/{orderId}", orderId)
+					.perform(put("/api/order/{orderId}", EXISTANT_ORDER_ID)
 							.contentType(MediaType.APPLICATION_JSON_VALUE)
 							.content(OrderMocks.jsonRequestOrderItems())
 							.characterEncoding("utf-8"))
 				    .andExpect(status().isOk())
-				    .andExpect(jsonPath("$.id", is(1)))
+				    .andExpect(jsonPath("$.id", is(EXISTANT_ORDER_ID.toString())))
 				    .andExpect(jsonPath("$.step", is("KITCHEN")))
 				    .andExpect(jsonPath("$.fase", is("PENDING")))
 				    .andExpect(jsonPath("$.items", hasSize(0)))
@@ -193,12 +195,11 @@ class OrderRestResourceIntegrationTests extends ApplicationIntegrationSupport {
 		
 		@Test
 		void givenUnexistantOrder_WhenMockMVCPut_thenReturnUpdatedOrder() throws Exception {
-			long orderId = 1L;
 			doReturn(Optional.empty())
-				.when(orderService).updateOrderItems(anyLong(), anyList());
+				.when(orderService).updateOrderItems(any(UUID.class), anyList());
 			
 			mockMvc
-					.perform(put("/api/order/{orderId}", orderId)
+					.perform(put("/api/order/{orderId}", UNEXISTANT_ORDER_ID)
 							.contentType(MediaType.APPLICATION_JSON_VALUE)
 							.content(OrderMocks.jsonRequestOrderItems())
 							.characterEncoding("utf-8"))
@@ -213,17 +214,16 @@ class OrderRestResourceIntegrationTests extends ApplicationIntegrationSupport {
 		
 		@Test
 		void givenExistantOrder_WhenMockMVCPutStepAndFase_thenReturnUpdatedOrder() throws Exception {
-			long orderId = 1L;
-			var order = OrderMocks.order(orderId);
+			var order = OrderMocks.order(EXISTANT_ORDER_ID);
 			
 			doReturn(Optional.of(order))
-				.when(orderService).updateStepAndFase(orderId, order.getStep(), order.getFase());
+				.when(orderService).updateStepAndFase(EXISTANT_ORDER_ID, order.getStep(), order.getFase());
 			
 			mockMvc
-					.perform(put("/api/order/{orderId}/{step}/{fase}", orderId, order.getStep(), order.getFase())
+					.perform(put("/api/order/{orderId}/{step}/{fase}", EXISTANT_ORDER_ID, order.getStep(), order.getFase())
 							.contentType(MediaType.APPLICATION_JSON_VALUE))
 				    .andExpect(status().isOk())
-				    .andExpect(jsonPath("$.id", is(1)))
+				    .andExpect(jsonPath("$.id", is(EXISTANT_ORDER_ID.toString())))
 				    .andExpect(jsonPath("$.step", is("KITCHEN")))
 				    .andExpect(jsonPath("$.fase", is("PENDING")))
 				    .andExpect(jsonPath("$.items", hasSize(0)))
@@ -235,14 +235,13 @@ class OrderRestResourceIntegrationTests extends ApplicationIntegrationSupport {
 		
 		@Test
 		void givenUnexistantOrder_WhenMockMVCPutStepAndFase_thenThrowsHandledError() throws Exception {
-			long orderId = 1L;
-			var order = OrderMocks.order(orderId);
+			var order = OrderMocks.order(UNEXISTANT_ORDER_ID);
 			
 			doReturn(Optional.empty())
-				.when(orderService).updateStepAndFase(orderId, order.getStep(), order.getFase());
+				.when(orderService).updateStepAndFase(UNEXISTANT_ORDER_ID, order.getStep(), order.getFase());
 			
 			mockMvc
-					.perform(put("/api/order/{orderId}/{step}/{fase}", orderId, order.getStep(), order.getFase())
+					.perform(put("/api/order/{orderId}/{step}/{fase}", UNEXISTANT_ORDER_ID, order.getStep(), order.getFase())
 							.contentType(MediaType.APPLICATION_JSON_VALUE))
 				    .andExpect(status().isNotFound())
 				    .andExpect(result -> assertThat(result.getResolvedException()).isInstanceOf(OrderNotFoundException.class))
@@ -255,17 +254,16 @@ class OrderRestResourceIntegrationTests extends ApplicationIntegrationSupport {
 		
 		@Test
 		void givenExistantOrder_WhenMockMVCPutFase_thenReturnUpdatedOrder() throws Exception {
-			long orderId = 1L;
-			var order = OrderMocks.order(orderId);
+			var order = OrderMocks.order(EXISTANT_ORDER_ID);
 			
 			doReturn(Optional.of(order))
-				.when(orderService).updateFase(orderId, order.getFase());
+				.when(orderService).updateFase(EXISTANT_ORDER_ID, order.getFase());
 			
 			mockMvc
-					.perform(put("/api/order/{orderId}/{fase}", orderId, order.getFase())
+					.perform(put("/api/order/{orderId}/{fase}", EXISTANT_ORDER_ID, order.getFase())
 							.contentType(MediaType.APPLICATION_JSON_VALUE))
 				    .andExpect(status().isOk())
-				    .andExpect(jsonPath("$.id", is(1)))
+				    .andExpect(jsonPath("$.id", is(EXISTANT_ORDER_ID.toString())))
 				    .andExpect(jsonPath("$.step", is("KITCHEN")))
 				    .andExpect(jsonPath("$.fase", is("PENDING")))
 				    .andExpect(jsonPath("$.items", hasSize(0)))
@@ -277,14 +275,13 @@ class OrderRestResourceIntegrationTests extends ApplicationIntegrationSupport {
 		
 		@Test
 		void givenUnexistantOrder_WhenMockMVCPutFase_thenThrowsHandledError() throws Exception {
-			long orderId = 1L;
-			var order = OrderMocks.order(orderId);
+			var order = OrderMocks.order(UNEXISTANT_ORDER_ID);
 			
 			doReturn(Optional.empty())
-				.when(orderService).updateFase(orderId, order.getFase());
+				.when(orderService).updateFase(UNEXISTANT_ORDER_ID, order.getFase());
 			
 			mockMvc
-					.perform(put("/api/order/{orderId}/{fase}", orderId, order.getFase())
+					.perform(put("/api/order/{orderId}/{fase}", UNEXISTANT_ORDER_ID, order.getFase())
 							.contentType(MediaType.APPLICATION_JSON_VALUE))
 				    .andExpect(status().isNotFound())
 				    .andExpect(result -> assertThat(result.getResolvedException()).isInstanceOf(OrderNotFoundException.class))
@@ -296,10 +293,8 @@ class OrderRestResourceIntegrationTests extends ApplicationIntegrationSupport {
 	class DeleteById {
 		@Test
 		void givenOrder_WhenMockMVCDeleteById_thenReturnNoContent() throws Exception {
-			long orderId = 1L;
-			
 			mockMvc
-					.perform(delete("/api/order/{orderId}", orderId))
+					.perform(delete("/api/order/{orderId}", EXISTANT_ORDER_ID))
 				    .andDo(print())
 				    .andExpect(status().isNoContent());
 		}

@@ -11,6 +11,7 @@ import static org.mockito.Mockito.verify;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Nested;
@@ -34,6 +35,9 @@ import br.com.bluesburguer.order.support.UserMocks;
 
 @ExtendWith(MockitoExtension.class)
 class OrderServiceUnitTests {
+	
+	private static final UUID EXISTANT_ORDER_ID = UUID.fromString("b9881aef-ca1a-4ce6-843b-0717f0f0b90a");
+	private static final UUID UNEXISTANT_ORDER_ID = UUID.fromString("fc48ec45-3b55-497d-8ca7-d3e852e94768");
 
 	@Mock
 	UserService userService;
@@ -51,7 +55,7 @@ class OrderServiceUnitTests {
 	class GetAll {
 		@Test
 		void givenOneExistantOrder_WhenListAllOrders_ThenShouldReturnListOfOrders() {
-			var order = OrderMocks.order(1L);
+			var order = OrderMocks.order(EXISTANT_ORDER_ID);
 			doReturn(List.of(order))
 				.when(orderRepository).findAll();
 			
@@ -67,7 +71,7 @@ class OrderServiceUnitTests {
 			var step = OrderStep.KITCHEN;
 			var fases = List.of(OrderFase.IN_PROGRESS);
 			
-			var order = OrderMocks.order(2L);
+			var order = OrderMocks.order(EXISTANT_ORDER_ID);
 			doReturn(List.of(order))
 				.when(orderRepository).findAllByStepAndFaseInOrderByCreatedTime(step, fases);
 			
@@ -82,7 +86,7 @@ class OrderServiceUnitTests {
 			List<OrderFase> fases = null;
 			var allFases = Stream.of(OrderFase.values()).toList();
 			
-			var order = OrderMocks.order(2L);
+			var order = OrderMocks.order(EXISTANT_ORDER_ID);
 			doReturn(List.of(order))
 				.when(orderRepository).findAllByStepAndFaseInOrderByCreatedTime(step, allFases);
 			
@@ -96,7 +100,7 @@ class OrderServiceUnitTests {
 			var step = OrderStep.KITCHEN;
 			List<OrderFase> fases = List.of();
 			var allFases = Stream.of(OrderFase.values()).toList();
-			var order = OrderMocks.order(2L);
+			var order = OrderMocks.order(EXISTANT_ORDER_ID);
 			
 			doReturn(List.of(order))
 				.when(orderRepository).findAllByStepAndFaseInOrderByCreatedTime(step, allFases);
@@ -111,24 +115,22 @@ class OrderServiceUnitTests {
 	class GetById {
 		@Test
 		void givenOneExistantOrder_WhenGetById_ThenShouldReturnExistantOrder() {
-			long orderId = 2L;
-			var order = OrderMocks.order(orderId);
+			var order = OrderMocks.order(EXISTANT_ORDER_ID);
 			
 			doReturn(Optional.of(order))
-				.when(orderRepository).findById(orderId);
+				.when(orderRepository).findById(EXISTANT_ORDER_ID);
 			
-			assertThat(orderService.getById(orderId))
+			assertThat(orderService.getById(EXISTANT_ORDER_ID))
 				.isPresent()
 				.isEqualTo(Optional.of(order));
 		}
 		
 		@Test
 		void givenOneUnexistantOrder_WhenGetById_ThenShouldReturnEmpty() {
-			long orderId = 2L;
 			doReturn(Optional.empty())
-				.when(orderRepository).findById(orderId);
+				.when(orderRepository).findById(UNEXISTANT_ORDER_ID);
 			
-			assertThat(orderService.getById(orderId))
+			assertThat(orderService.getById(UNEXISTANT_ORDER_ID))
 				.isNotPresent();
 		}
 	}
@@ -138,7 +140,7 @@ class OrderServiceUnitTests {
 		@Test
 		void givenOneExistantItem_WhenGetByOrderItemId_ThenShouldReturnExistantItem() {
 			long orderItemId = 2L;
-			var order = OrderMocks.order(1L);
+			var order = OrderMocks.order(EXISTANT_ORDER_ID);
 			var orderItem = OrderMocks.orderItem(orderItemId, order);
 			doReturn(Optional.of(orderItem))
 				.when(orderItemRepository).findByOrderItemId(anyLong());
@@ -167,7 +169,7 @@ class OrderServiceUnitTests {
 		@Test
 		void givenOneExistantItem_WhenGetById_ThenShouldReturnExistantItem() {
 			long orderItemId = 2L;
-			var order = OrderMocks.order(1L);
+			var order = OrderMocks.order(EXISTANT_ORDER_ID);
 			var orderItem = OrderMocks.orderItem(orderItemId, order);
 			doReturn(Optional.of(orderItem))
 				.when(orderItemRepository).findById(anyLong());
@@ -195,7 +197,7 @@ class OrderServiceUnitTests {
 	class CreateNewOrder {
 		@Test
 		void givenNewOrderRequest_WhenSaveNewOrderForExistantUser_ThenShouldReturnSavedOrder() {
-			var order = OrderMocks.order(1L);
+			var order = OrderMocks.order(EXISTANT_ORDER_ID);
 			var userRequest = UserMocks.userRequest();
 			
 			doReturn(UserMocks.user())
@@ -219,26 +221,25 @@ class OrderServiceUnitTests {
 		
 		@Test
 		void givenExistantOrder_WhenUpdateStepAndFase_ThenShouldReturnUpdatedOrder() {
-			long orderId = 1L;
 			var step = OrderStep.ORDER;
 			var fase = OrderFase.IN_PROGRESS;
 			
-			var existantOrder = OrderMocks.order(orderId);
+			var existantOrder = OrderMocks.order(EXISTANT_ORDER_ID);
 			doReturn(Optional.of(existantOrder))
-				.when(orderRepository).findById(orderId);
+				.when(orderRepository).findById(EXISTANT_ORDER_ID);
 			
-			var updatedOrder = OrderMocks.order(orderId);
+			var updatedOrder = OrderMocks.order(EXISTANT_ORDER_ID);
 			updatedOrder.setStep(step);
 			updatedOrder.setFase(fase);
 			
 			doReturn(updatedOrder)
 				.when(orderRepository).save(any(Order.class));
 			
-			var updatedReturn = orderService.updateStepAndFase(orderId, step, fase);
+			var updatedReturn = orderService.updateStepAndFase(EXISTANT_ORDER_ID, step, fase);
 			assertThat(updatedReturn)
 				.isPresent()
 				.get()
-				.hasFieldOrPropertyWithValue("id", orderId)
+				.hasFieldOrPropertyWithValue("id", EXISTANT_ORDER_ID)
 				.hasFieldOrPropertyWithValue("step", step)
 				.hasFieldOrPropertyWithValue("fase", fase)
 				.hasFieldOrProperty("user")
@@ -248,51 +249,49 @@ class OrderServiceUnitTests {
 				.hasFieldOrProperty("user.creationDateTime")
 				.hasSameHashCodeAs(updatedOrder);
 
-			verify(orderRepository).findById(orderId);
+			verify(orderRepository).findById(EXISTANT_ORDER_ID);
 			verify(orderRepository).save(any(Order.class));
 		}
 		
 		@Test
 		void givenUnexistantOrder_WhenUpdateStepAndFase_ThenShouldReturnEmpty() {
-			long orderId = 1L;
 			var step = OrderStep.ORDER;
 			var fase = OrderFase.IN_PROGRESS;
 			
 			doReturn(Optional.empty())
-				.when(orderRepository).findById(orderId);
+				.when(orderRepository).findById(UNEXISTANT_ORDER_ID);
 			
 			var updatedOrder = new Order(fase, UserMocks.user());
 			updatedOrder.setStep(step);
 			
-			assertThat(orderService.updateStepAndFase(orderId, step, fase))
+			assertThat(orderService.updateStepAndFase(UNEXISTANT_ORDER_ID, step, fase))
 				.isNotPresent();
 			
-			verify(orderRepository).findById(orderId);
+			verify(orderRepository).findById(UNEXISTANT_ORDER_ID);
 			verify(orderRepository, never()).save(updatedOrder);
 		}
 		
 		@Test
 		void givenExistantOrder_WhenUpdateStepAndFaseWithError_ThenShouldReturnEmpty() {
-			long orderId = 1L;
 			var step = OrderStep.ORDER;
 			var fase = OrderFase.IN_PROGRESS;
 			
-			var existantOrder = OrderMocks.order(orderId);
+			var existantOrder = OrderMocks.order(EXISTANT_ORDER_ID);
 			doReturn(Optional.of(existantOrder))
-				.when(orderRepository).findById(orderId);
+				.when(orderRepository).findById(EXISTANT_ORDER_ID);
 			
-			var updatedOrder = OrderMocks.order(orderId);
+			var updatedOrder = OrderMocks.order(EXISTANT_ORDER_ID);
 			updatedOrder.setStep(step);
 			updatedOrder.setFase(fase);
 			
 			doReturn(null)
 				.when(orderRepository).save(any(Order.class));
 			
-			var updatedReturn = orderService.updateStepAndFase(orderId, step, fase);
+			var updatedReturn = orderService.updateStepAndFase(EXISTANT_ORDER_ID, step, fase);
 			assertThat(updatedReturn)
 				.isNotPresent();
 
-			verify(orderRepository).findById(orderId);
+			verify(orderRepository).findById(EXISTANT_ORDER_ID);
 			verify(orderRepository).save(any(Order.class));
 		}
 	}
@@ -301,24 +300,23 @@ class OrderServiceUnitTests {
 	class UpdateFase {
 		@Test
 		void givenExistantOrder_WhenUpdateStepAndFase_ThenShouldReturnUpdatedOrder() {
-			long orderId = 1L;
 			var fase = OrderFase.IN_PROGRESS;
 			
-			var existantOrder = OrderMocks.order(orderId);
+			var existantOrder = OrderMocks.order(EXISTANT_ORDER_ID);
 			doReturn(Optional.of(existantOrder))
-				.when(orderRepository).findById(orderId);
+				.when(orderRepository).findById(EXISTANT_ORDER_ID);
 			
-			var updatedOrder = OrderMocks.order(orderId);
+			var updatedOrder = OrderMocks.order(EXISTANT_ORDER_ID);
 			updatedOrder.setFase(fase);
 			
 			doReturn(updatedOrder)
 				.when(orderRepository).save(any(Order.class));
 			
-			var updatedReturn = orderService.updateFase(orderId, fase);
+			var updatedReturn = orderService.updateFase(EXISTANT_ORDER_ID, fase);
 			assertThat(updatedReturn)
 				.isPresent()
 				.get()
-				.hasFieldOrPropertyWithValue("id", orderId)
+				.hasFieldOrPropertyWithValue("id", EXISTANT_ORDER_ID)
 				.hasFieldOrPropertyWithValue("step", existantOrder.getStep())
 				.hasFieldOrPropertyWithValue("fase", fase)
 				.hasFieldOrProperty("user")
@@ -328,47 +326,45 @@ class OrderServiceUnitTests {
 				.hasFieldOrProperty("user.creationDateTime")
 				.hasSameHashCodeAs(updatedOrder);
 
-			verify(orderRepository).findById(orderId);
+			verify(orderRepository).findById(EXISTANT_ORDER_ID);
 			verify(orderRepository).save(any(Order.class));
 		}
 		
 		@Test
 		void givenUnexistantOrder_WhenUpdateStepAndFase_ThenShouldReturnEmpty() {
-			long orderId = 1L;
 			var fase = OrderFase.IN_PROGRESS;
 			
 			doReturn(Optional.empty())
-				.when(orderRepository).findById(orderId);
+				.when(orderRepository).findById(UNEXISTANT_ORDER_ID);
 			
 			var updatedOrder = new Order(fase, UserMocks.user());
 			
-			assertThat(orderService.updateFase(orderId, fase))
+			assertThat(orderService.updateFase(UNEXISTANT_ORDER_ID, fase))
 				.isNotPresent();
 			
-			verify(orderRepository).findById(orderId);
+			verify(orderRepository).findById(UNEXISTANT_ORDER_ID);
 			verify(orderRepository, never()).save(updatedOrder);
 		}
 		
 		@Test
 		void givenExistantOrder_WhenUpdateStepAndFaseWithError_ThenShouldReturnEmpty() {
-			long orderId = 1L;
 			var fase = OrderFase.IN_PROGRESS;
 			
-			var existantOrder = OrderMocks.order(orderId);
+			var existantOrder = OrderMocks.order(EXISTANT_ORDER_ID);
 			doReturn(Optional.of(existantOrder))
-				.when(orderRepository).findById(orderId);
+				.when(orderRepository).findById(EXISTANT_ORDER_ID);
 			
-			var updatedOrder = OrderMocks.order(orderId);
+			var updatedOrder = OrderMocks.order(EXISTANT_ORDER_ID);
 			updatedOrder.setFase(fase);
 			
 			doReturn(null)
 				.when(orderRepository).save(any(Order.class));
 			
-			var updatedReturn = orderService.updateFase(orderId, fase);
+			var updatedReturn = orderService.updateFase(EXISTANT_ORDER_ID, fase);
 			assertThat(updatedReturn)
 				.isNotPresent();
 
-			verify(orderRepository).findById(orderId);
+			verify(orderRepository).findById(EXISTANT_ORDER_ID);
 			verify(orderRepository).save(any(Order.class));
 		}
 	}
@@ -378,19 +374,18 @@ class OrderServiceUnitTests {
 		
 		@Test
 		void givenExistantOrder_WhenUpdateOrderItems_ThenShouldReturnUpdatedOrder() {
-			long orderId = 1L;
-			var existantOrder = OrderMocks.order(orderId);
+			var existantOrder = OrderMocks.order(EXISTANT_ORDER_ID);
 			doReturn(Optional.of(existantOrder))
-				.when(orderRepository).findById(orderId);
+				.when(orderRepository).findById(EXISTANT_ORDER_ID);
 			
 			doReturn(OrderMocks.orderItem(1L, existantOrder))
 				.when(orderItemRepository).save(any(OrderItem.class));
 			
 			var orderItems = List.of(new OrderItemRequest(1L, 1));
-			assertThat(orderService.updateOrderItems(orderId, orderItems))
+			assertThat(orderService.updateOrderItems(EXISTANT_ORDER_ID, orderItems))
 				.isPresent()
 				.get()
-				.hasFieldOrPropertyWithValue("id", orderId)
+				.hasFieldOrPropertyWithValue("id", EXISTANT_ORDER_ID)
 				.hasFieldOrPropertyWithValue("step", existantOrder.getStep())
 				.hasFieldOrPropertyWithValue("fase", existantOrder.getFase())
 				.hasFieldOrProperty("user")
@@ -399,24 +394,23 @@ class OrderServiceUnitTests {
 				.hasFieldOrPropertyWithValue("user.cpf", existantOrder.getUser().getCpf())
 				.hasFieldOrProperty("user.creationDateTime");
 			
-			verify(orderRepository).findById(orderId);
-			verify(orderItemRepository).deleteAllByOrderId(orderId);
+			verify(orderRepository).findById(EXISTANT_ORDER_ID);
+			verify(orderItemRepository).deleteAllByOrderId(EXISTANT_ORDER_ID);
 			verify(orderItemRepository, times(orderItems.size()))
 				.save(any(OrderItem.class));
 		}
 		
 		@Test
 		void givenUnexistantOrder_WhenUpdateOrderItems_ThenShouldReturnEmpty() {
-			long orderId = 1L;;
 			doReturn(Optional.empty())
-				.when(orderRepository).findById(orderId);
+				.when(orderRepository).findById(UNEXISTANT_ORDER_ID);
 			
 			var orderItems = List.of(new OrderItemRequest(1L, 1));
-			assertThat(orderService.updateOrderItems(orderId, orderItems))
+			assertThat(orderService.updateOrderItems(UNEXISTANT_ORDER_ID, orderItems))
 				.isNotPresent();
 			
-			verify(orderRepository).findById(orderId);
-			verify(orderItemRepository, never()).deleteAllByOrderId(orderId);
+			verify(orderRepository).findById(UNEXISTANT_ORDER_ID);
+			verify(orderItemRepository, never()).deleteAllByOrderId(UNEXISTANT_ORDER_ID);
 			verify(orderItemRepository, never()).save(any(OrderItem.class));
 		}
 	}
@@ -427,7 +421,7 @@ class OrderServiceUnitTests {
 		@Test
 		void givenNewOrder_WhenSaveItem_ThenReturnSavedItem() {
 			var itemRequest = new OrderItemRequest(1L, 1);
-			var order = OrderMocks.order(1L);
+			var order = OrderMocks.order(EXISTANT_ORDER_ID);
 			var orderItem = OrderMocks.orderItem(1L, order);
 			
 			doReturn(orderItem)
@@ -445,30 +439,26 @@ class OrderServiceUnitTests {
 		
 		@Test
 		void givenExistantOrder_WhenDeleteById_ThenShouldReturnNoContent() {
-			long orderId = 1L;
-			
-			var order = OrderMocks.order(orderId);
+			var order = OrderMocks.order(EXISTANT_ORDER_ID);
 			doReturn(Optional.of(order))
-				.when(orderRepository).findById(orderId);
+				.when(orderRepository).findById(EXISTANT_ORDER_ID);
 			
-			orderService.deleteById(orderId);
+			orderService.deleteById(EXISTANT_ORDER_ID);
 			
-			verify(orderRepository).findById(orderId);
-			verify(orderItemRepository).deleteAllByOrderId(orderId);
+			verify(orderRepository).findById(EXISTANT_ORDER_ID);
+			verify(orderItemRepository).deleteAllByOrderId(EXISTANT_ORDER_ID);
 			verify(orderRepository).delete(order);
 		}
 		
 		@Test
 		void givenUnexistantOrder_WhenDeleteById_ThenShouldThrows() {
-			long orderId = 1L;
-			
 			doReturn(Optional.empty())
-				.when(orderRepository).findById(orderId);
+				.when(orderRepository).findById(UNEXISTANT_ORDER_ID);
 			
-			assertThrows(OrderNotFoundException.class, () -> orderService.deleteById(orderId), "Pedido não encontrado");
+			assertThrows(OrderNotFoundException.class, () -> orderService.deleteById(UNEXISTANT_ORDER_ID), "Pedido não encontrado");
 			
-			verify(orderRepository).findById(orderId);
-			verify(orderItemRepository, never()).deleteAllByOrderId(orderId);
+			verify(orderRepository).findById(UNEXISTANT_ORDER_ID);
+			verify(orderItemRepository, never()).deleteAllByOrderId(UNEXISTANT_ORDER_ID);
 			verify(orderRepository, never()).delete(any(Order.class));
 		}
 	}
@@ -478,7 +468,7 @@ class OrderServiceUnitTests {
 		
 		@Test
 		void givenExistantOrder_WhenAddItem_ThenShouldReturnAddedItem() {
-			var order = OrderMocks.order(1L);
+			var order = OrderMocks.order(EXISTANT_ORDER_ID);
 			var orderItem = OrderMocks.orderItem(1L, order);
 			var orderItemSaved = OrderMocks.orderItem(1L, order);
 			orderItemSaved.setId(2L);
@@ -487,7 +477,7 @@ class OrderServiceUnitTests {
 				.when(orderItemRepository).save(any(OrderItem.class));
 			
 			doReturn(Optional.of(order))
-				.when(orderRepository).findById(1L);
+				.when(orderRepository).findById(EXISTANT_ORDER_ID);
 			
 			var itemRequest = new OrderItemRequest(orderItem.getId(), orderItem.getQuantity());
 			assertThat(orderService.addItem(order.getId(), itemRequest))

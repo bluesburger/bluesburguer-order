@@ -3,6 +3,7 @@ package br.com.bluesburguer.order.support;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import br.com.bluesburguer.order.adapters.in.order.dto.OrderDto;
 import br.com.bluesburguer.order.adapters.in.order.item.dto.OrderItemDto;
@@ -56,13 +57,17 @@ public class OrderMocks {
 				]
 				""";
 	}
+	public static Order order() {
+		var orderId = UUID.fromString("b4d3f760-761f-4e07-8610-ebe389684e6d");
+		return order(orderId);
+	}
 	
-	public static Order order(long orderId) {
+	public static Order order(UUID orderId) {
 		var user = new OrderUser(1L, OrderMocks.mockCpf(), OrderMocks.mockEmail(), LocalDateTime.now(), List.of());
 		return order(orderId, user);
 	}
 	
-	public static Order order(long orderId, OrderUser user) {
+	public static Order order(UUID orderId, OrderUser user) {
 		var step = OrderStep.KITCHEN;
 		var fase = OrderFase.PENDING;
 		
@@ -76,7 +81,7 @@ public class OrderMocks {
 		return new OrderItem(1L, 1L, order, 1, LocalDateTime.now(), LocalDateTime.now());
 	}
 
-	public static OrderDto orderDto(long orderId) {
+	public static OrderDto orderDto(UUID orderId) {
 		var step = OrderStep.KITCHEN;
 		var fase = OrderFase.PENDING;
 		var items = List.of(new OrderItemDto(1L, 1));

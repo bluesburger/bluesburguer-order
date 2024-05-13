@@ -3,6 +3,7 @@ package br.com.bluesburguer.order.adapters.in.order.dto;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -24,8 +25,8 @@ class PanelMapperUnitTests {
 		
 		@Test
 		void givenOrderList_WhenToOrderDtoList_ThenReturnPanelDto() {
-			
-			var orderDto = OrderMocks.orderDto(1L);
+			var orderId = UUID.fromString("ddedf1ab-0b2f-4766-a9fc-104bedc98492");
+			var orderDto = OrderMocks.orderDto(orderId);
 			var orderList = List.of(orderDto);
 			
 			var panelDto = panelMapper.to(orderList);

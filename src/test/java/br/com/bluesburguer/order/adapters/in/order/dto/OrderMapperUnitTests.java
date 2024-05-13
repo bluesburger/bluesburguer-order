@@ -3,6 +3,8 @@ package br.com.bluesburguer.order.adapters.in.order.dto;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doCallRealMethod;
 
+import java.util.UUID;
+
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,6 +18,8 @@ import br.com.bluesburguer.order.support.OrderMocks;
 @ExtendWith(MockitoExtension.class)
 class OrderMapperUnitTests {
 	
+	private static final UUID ORDER_ID = UUID.fromString("ddedf1ab-0b2f-4766-a9fc-104bedc98492");
+	
 	@Mock
 	private UserMapper userMapper;
 	
@@ -26,8 +30,7 @@ class OrderMapperUnitTests {
 	class ToOrderDto {
 		@Test
 		void givenOrder_WhenToOrderDto_ThenReturnOrderDto() {
-			long orderId = 1L;
-			var order = OrderMocks.order(orderId);
+			var order = OrderMocks.order(ORDER_ID);
 			
 			assertThat(orderMapper.to(order))
 				.hasFieldOrPropertyWithValue("id", order.getId())
@@ -43,7 +46,7 @@ class OrderMapperUnitTests {
 		
 		@Test
 		void givenOrderItem_WhenToOrderItemDto_ThenReturnOrderItemDto() {
-			var order = OrderMocks.order(1L);
+			var order = OrderMocks.order(ORDER_ID);
 			var orderItem = OrderMocks.orderItem(1L, order);
 			
 			assertThat(orderMapper.to(orderItem))
@@ -58,7 +61,7 @@ class OrderMapperUnitTests {
 		@Test
 		void givenOrderDto_WhenFromOrderDto_ThenReturnOrder() {
 			
-			var orderDto = OrderMocks.orderDto(1L);
+			var orderDto = OrderMocks.orderDto(ORDER_ID);
 			var user = orderDto.getUser();
 			
 			doCallRealMethod()
