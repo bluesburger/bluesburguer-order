@@ -41,11 +41,7 @@ public class OrderMapper {
 		order.setStep(orderDto.getStep());
 		order.setFase(orderDto.getFase());
 		var items = orderDto.getItems().stream()
-			.map(itemDto -> {
-				var item = new OrderItem();
-				item.setId(itemDto.getId());
-				return item;				
-			})
+			.map(itemDto -> new OrderItem(itemDto.getId(), order))
 			.toArray(size -> new OrderItem[size]);
 		order.add(items);
 		return order;

@@ -45,6 +45,10 @@ public class OrderService implements OrderPort {
 	public Optional<Order> getById(Long orderId) {
 		return orderRepository.findById(orderId);
 	}
+	
+	public Optional<OrderItem> getItemByOrderItemId(Long orderItemId) {
+		return orderItemRepository.findByOrderItemId(orderItemId);
+	}
 
 	public Optional<OrderItem> getItemById(Long orderItemId) {
 		return orderItemRepository.findById(orderItemId);
@@ -109,9 +113,7 @@ public class OrderService implements OrderPort {
 			rollbackOn = OrderNotFoundException.class, 
 			dontRollbackOn = EntityExistsException.class)
 	public OrderItem saveItem(OrderItemRequest itemRequest, Order order) {
-		var item = new OrderItem();
-		item.setId(itemRequest.getId());
-		item.setOrder(order);
+		var item = new OrderItem(itemRequest.getId(), order);
 		item.setQuantity(itemRequest.getQuantity());
 		return orderItemRepository.save(item);
 	}
@@ -132,7 +134,8 @@ public class OrderService implements OrderPort {
 		return Optional.ofNullable(orderId)
 				.map(oId -> orderRepository.findById(oId).orElseThrow(OrderNotFoundException::new))
 				.map(order -> {
-					var item = new OrderItem(itemRequest.getId(), order, itemRequest.getQuantity(), null, null);
+					var item = new OrderItem(itemRequest.getId(), order);
+					item.setQuantity(itemRequest.getQuantity());
 					return orderItemRepository.save(item);
 				})
 				.orElseThrow(OrderNotFoundException::new);

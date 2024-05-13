@@ -46,6 +46,14 @@ sonarqube-publish:
 	
 sonarqube-analyze: build sonarqube-publish
 
+## Test
+
+unit-test:
+	@.\mvnw $(MVN_ARGS) test -P unit-test
+
+integration-test:
+	@.\mvnw $(MVN_ARGS) test -P integration-test
+
 system-test:
 	@ .\mvnw $(MVN_ARGS) test -Psystem-test
 	@ echo $(TIMESTAMP) [INFO] cucumber HTML report generate in: target/cucumber-reports/cucumber.html

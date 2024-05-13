@@ -10,9 +10,11 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import br.com.bluesburguer.order.core.domain.OrderFase;
 import br.com.bluesburguer.order.core.domain.OrderStep;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -34,7 +36,7 @@ import lombok.ToString;
 
 @Entity
 @Getter
-@ToString
+@ToString(exclude = "items")
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @RequiredArgsConstructor
 @AllArgsConstructor
@@ -68,7 +70,7 @@ public class Order implements Serializable {
     private OrderFase fase;
 
     @Default
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<OrderItem> items = new ArrayList<>();
     
     @NonNull

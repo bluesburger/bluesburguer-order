@@ -7,7 +7,9 @@ import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -23,7 +25,7 @@ import lombok.ToString;
 
 @Entity
 @Getter
-@ToString
+@ToString(exclude = "orders")
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(schema = "bluesburguer-order", name = "TB_USER")
@@ -46,6 +48,6 @@ public class OrderUser implements Serializable {
     private LocalDateTime creationDateTime;
 	
 	@Default
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Order> orders = new ArrayList<>();
 }

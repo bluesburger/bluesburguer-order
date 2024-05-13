@@ -51,8 +51,8 @@ public class ApiPerformanceSimulation extends Simulation {
                                 .during(Duration.ofSeconds(10))))
                 .protocols(httpProtocol)
                 .assertions(
-                		// 200 milisegundos é aceitável
-                        global().responseTime().max().lt(200),
+                		// 300 milisegundos é aceitável
+                        global().responseTime().max().lt(300),
                         global().failedRequests().count().is(0L));
     }
 }

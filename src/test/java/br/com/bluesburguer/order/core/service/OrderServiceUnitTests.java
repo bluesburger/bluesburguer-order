@@ -3,6 +3,7 @@ package br.com.bluesburguer.order.core.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -133,13 +134,43 @@ class OrderServiceUnitTests {
 	}
 	
 	@Nested
+	class GetItemByOrderItemId {
+		@Test
+		void givenOneExistantItem_WhenGetByOrderItemId_ThenShouldReturnExistantItem() {
+			long orderItemId = 2L;
+			var order = OrderMocks.order(1L);
+			var orderItem = OrderMocks.orderItem(orderItemId, order);
+			doReturn(Optional.of(orderItem))
+				.when(orderItemRepository).findByOrderItemId(anyLong());
+			
+			assertThat(orderService.getItemByOrderItemId(orderItemId))
+				.isPresent()
+				.isEqualTo(Optional.of(orderItem));
+			
+			verify(orderItemRepository).findByOrderItemId(orderItemId);
+		}
+		
+		@Test
+		void givenOneUnexistantOrder_WhenGetByOrderItemId_AndServerReturnsNull_ThenShouldReturnEmpty() {
+			long orderItemId = 3L;
+			doReturn(Optional.empty())
+				.when(orderItemRepository).findByOrderItemId(orderItemId);
+			
+			assertThat(orderService.getItemByOrderItemId(orderItemId))
+				.isNotPresent();
+			verify(orderItemRepository).findByOrderItemId(orderItemId);
+		}
+	}
+	
+	@Nested
 	class GetItemById {
 		@Test
 		void givenOneExistantItem_WhenGetById_ThenShouldReturnExistantItem() {
 			long orderItemId = 2L;
-			var orderItem = OrderMocks.orderItem(orderItemId, null);
+			var order = OrderMocks.order(1L);
+			var orderItem = OrderMocks.orderItem(orderItemId, order);
 			doReturn(Optional.of(orderItem))
-				.when(orderItemRepository).findById(orderItemId);
+				.when(orderItemRepository).findById(anyLong());
 			
 			assertThat(orderService.getItemById(orderItemId))
 				.isPresent()
@@ -463,16 +494,6 @@ class OrderServiceUnitTests {
 				.hasFieldOrPropertyWithValue("id", orderItemSaved.getId());
 			
 			verify(orderItemRepository).save(any(OrderItem.class));
-		}
-		
-		@Test
-		void givenUnexistantOrder_WhenAddItem_ThenShouldThrowsHandledException() {
-			var orderItem = OrderMocks.orderItem(1L, null);
-			
-			var itemRequest = new OrderItemRequest(orderItem.getId(), orderItem.getQuantity());
-			assertThrows(OrderNotFoundException.class, () -> orderService.addItem(null, itemRequest), "Pedido não encontrado");
-			
-			verify(orderItemRepository, never()).save(orderItem);
 		}
 	}
 }

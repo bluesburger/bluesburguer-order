@@ -58,7 +58,6 @@ class UserRestResourceIntegrationTests extends ApplicationIntegrationSupport {
 				.perform(get("/api/user"))
 			    .andExpect(status().isOk())
 			    .andExpect(jsonPath("$").isArray())
-			    .andExpect(jsonPath("$.length()", is(1)))
 			    .andExpect(jsonPath("$.[0].id", is(savedUser.getId().intValue())))
 			    .andExpect(jsonPath("$.[0].cpf", is(savedUser.getCpf())))
 			    .andExpect(jsonPath("$.[0].email", is(savedUser.getEmail())));

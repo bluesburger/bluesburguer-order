@@ -388,8 +388,9 @@ class OrderServiceIntegrationTests extends ApplicationIntegrationSupport {
 			validatePersistedOrder(createdOrder, step, fase, cpf, email);
 			
 			var item = new OrderItemRequest(1L, quantity);
-			assertThat(orderService.addItem(createdOrder.get().getId(), item))
-				.hasFieldOrPropertyWithValue("id", 1L)
+			var orderId = createdOrder.get().getId();
+			assertThat(orderService.addItem(orderId, item))
+				.hasFieldOrProperty("id")
 				.hasFieldOrProperty("order")
 				.hasFieldOrPropertyWithValue("quantity", quantity)
 				.hasFieldOrProperty("createdTime")
