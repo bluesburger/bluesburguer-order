@@ -45,7 +45,7 @@ public class OrderRestResource {
 	@ApiResponses(value = { 
 	  @ApiResponse(responseCode = "200", description = "List of orders", 
 	    content = { @Content(mediaType = "application/json", 
-	      schema = @Schema(implementation = OrderDto.class)) })
+	      schema = @Schema(allOf = OrderDto.class)) })
 	})
 	@GetMapping
 	public List<OrderDto> getAll() {
@@ -54,6 +54,14 @@ public class OrderRestResource {
 			.toList();
 	}
 
+	@ApiResponses(value = { 
+	  @ApiResponse(responseCode = "200", description = "Order found with id", 
+	    content = {@Content(
+	    		mediaType = "application/json", 
+	    		schema = @Schema(implementation = OrderDto.class))}),
+	  @ApiResponse(responseCode = "404", description = "Order not found",
+	  	content = { @Content(mediaType = "application/json") })
+	})
 	@GetMapping("/{orderId}")
 	public OrderDto getById(@PathVariable UUID orderId) {
 		return orderService.getById(orderId)
@@ -61,6 +69,11 @@ public class OrderRestResource {
 			.orElseThrow(OrderNotFoundException::new);
 	}
 	
+	@ApiResponses(value = { 
+	  @ApiResponse(responseCode = "200", description = "List of orders with step", 
+	    content = { @Content(mediaType = "application/json", 
+	      schema = @Schema(implementation = OrderDto.class)) })
+	})
 	@GetMapping("/step/{step}")
 	public List<OrderDto> getByStep(@PathVariable OrderStep step, 
 			@RequestParam(required = false) List<OrderFase> fase) {
@@ -69,6 +82,13 @@ public class OrderRestResource {
 				.toList();
 	}
 	
+	@ApiResponses(value = { 
+	  @ApiResponse(responseCode = "201", description = "URI of created order", 
+	    content = { @Content(mediaType = "application/json", 
+	      schema = @Schema(implementation = URI.class)) }),
+	  @ApiResponse(responseCode = "400", description = "Fail to create order", 
+	    content = { @Content(mediaType = "application/json")})
+	})
 	@PostMapping(consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	public ResponseEntity<URI> createNewOrder(@Valid @RequestBody OrderRequest orderRequest) {
 		return orderService.createNewOrder(orderRequest)
@@ -81,6 +101,13 @@ public class OrderRestResource {
 				.orElseThrow(OrderFailToCreateException::new);
 	}
 	
+	@ApiResponses(value = { 
+	  @ApiResponse(responseCode = "200", description = "Items of order updated", 
+	    content = { @Content(mediaType = "application/json", 
+	      schema = @Schema(implementation = OrderDto.class)) }),
+	  @ApiResponse(responseCode = "404", description = "Order not found",
+	  	content = { @Content(mediaType = "application/json") })
+	})
 	@PutMapping(value = "/{orderId}")
 	public OrderDto updateOrderItems(@PathVariable UUID orderId, @Valid @RequestBody List<OrderItemRequest> orderItems) {
 		return orderService.updateOrderItems(orderId, orderItems)
@@ -88,6 +115,13 @@ public class OrderRestResource {
 				.orElseThrow(OrderNotFoundException::new);
 	}
 	
+	@ApiResponses(value = { 
+	  @ApiResponse(responseCode = "200", description = "Step/Fase where updated", 
+	    content = { @Content(mediaType = "application/json", 
+	      schema = @Schema(implementation = OrderDto.class)) }),
+	  @ApiResponse(responseCode = "404", description = "Order not found",
+	  	content = { @Content(mediaType = "application/json") })
+	})
 	@PutMapping(value = "/{orderId}/{step}/{fase}")
 	public OrderDto updateStepAndFase(@PathVariable UUID orderId, @PathVariable OrderStep step, @PathVariable OrderFase fase) {
 		return orderService.updateStepAndFase(orderId, step, fase)
@@ -95,6 +129,13 @@ public class OrderRestResource {
 				.orElseThrow(OrderNotFoundException::new);
 	}
 	
+	@ApiResponses(value = { 
+	  @ApiResponse(responseCode = "200", description = "Fase of order was updated", 
+	    content = { @Content(mediaType = "application/json", 
+	      schema = @Schema(implementation = OrderDto.class)) }),
+	  @ApiResponse(responseCode = "404", description = "Order not found",
+	  	content = { @Content(mediaType = "application/json") })
+	})
 	@PutMapping(value = "/{orderId}/{fase}")
 	public OrderDto updateFase(@PathVariable UUID orderId, @PathVariable OrderFase fase) {
 		return orderService.updateFase(orderId, fase)
@@ -102,6 +143,11 @@ public class OrderRestResource {
 				.orElseThrow(OrderNotFoundException::new);
 	}
 	
+	@ApiResponses(value = { 
+	  @ApiResponse(responseCode = "204", description = "Order were deleted", 
+	    content = { @Content(mediaType = "application/json", 
+	      schema = @Schema(implementation = OrderDto.class)) })
+	})
 	@DeleteMapping("/{orderId}")
 	public ResponseEntity<Void> deleteById(@PathVariable UUID orderId) {
 		orderService.deleteById(orderId);
