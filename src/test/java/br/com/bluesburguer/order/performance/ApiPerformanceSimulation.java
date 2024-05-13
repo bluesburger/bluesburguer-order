@@ -35,8 +35,20 @@ public class ApiPerformanceSimulation extends Simulation {
 			"""))
 			.check(status().is(201));
 	
+	ActionBuilder updateOrderFaseRequest = http("atualizar fase do pedido")
+			.put("/api/order/1/IN_PROGRESS");
+	
+	ActionBuilder updateOrderStepAndFaseRequest = http("atualizar passo e fase do pedido")
+			.put("/api/order/2/KITCHEN/IN_PROGRESS");
+	
 	ScenarioBuilder cenarioAddOrder = scenario("adicionar pedido")
 				.exec(addOrderRequest);
+	
+	ScenarioBuilder updateOrderFase = scenario("atualizar fase do pedido")
+			.exec(updateOrderFaseRequest);
+	
+	ScenarioBuilder updateOrderStepAndFase = scenario("atualizar passo e fase do pedido")
+			.exec(updateOrderStepAndFaseRequest);
 	
 	{
         setUp(
@@ -48,7 +60,26 @@ public class ApiPerformanceSimulation extends Simulation {
                                 .during(Duration.ofSeconds(60)),
                         rampUsersPerSec(10)
                                 .to(1)
-                                .during(Duration.ofSeconds(10))))
+                                .during(Duration.ofSeconds(10))),
+        		updateOrderFase.injectOpen(
+                        rampUsersPerSec(1)
+                        .to(10)
+                        .during(Duration.ofSeconds(10)),
+                constantUsersPerSec(10)
+                        .during(Duration.ofSeconds(60)),
+                rampUsersPerSec(10)
+                        .to(1)
+                        .during(Duration.ofSeconds(10))),
+        		updateOrderStepAndFase.injectOpen(
+                        rampUsersPerSec(1)
+                        .to(10)
+                        .during(Duration.ofSeconds(10)),
+                constantUsersPerSec(10)
+                        .during(Duration.ofSeconds(60)),
+                rampUsersPerSec(10)
+                        .to(1)
+                        .during(Duration.ofSeconds(10)))
+        )
                 .protocols(httpProtocol)
                 .assertions(
                 		// 300 milisegundos é aceitável
