@@ -6,10 +6,10 @@ import io.swagger.v3.oas.annotations.servers.Server;
 
 @OpenAPIDefinition(
 		info = @Info(
-				title = "Ordering System Production",
+				title = "Bluesburguer Order",
 				version = "v2.0"
 		),
-		servers = @Server(url = "http://localhost:8080")
+		servers = @Server(url = "http://localhost:8000")
 )
 public class OpenApiConfig {
 
