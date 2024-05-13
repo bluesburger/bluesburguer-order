@@ -7,13 +7,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.bluesburguer.order.adapters.in.user.dto.UserMapper;
 import br.com.bluesburguer.order.adapters.in.user.dto.UserDto;
+import br.com.bluesburguer.order.adapters.in.user.dto.UserMapper;
+import br.com.bluesburguer.order.adapters.out.UserNotFoundException;
 import br.com.bluesburguer.order.core.service.UserService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RestController
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
@@ -34,6 +33,6 @@ public class UserRestResource {
 	public UserDto getById(@PathVariable Long id) {
 		return userService.findById(id)
 			.map(userAssembler::to)
-			.orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado"));
+			.orElseThrow(UserNotFoundException::new);
 	}
 }

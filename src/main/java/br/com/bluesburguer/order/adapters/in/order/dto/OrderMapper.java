@@ -2,12 +2,12 @@ package br.com.bluesburguer.order.adapters.in.order.dto;
 
 import java.util.Optional;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.stereotype.Component;
 
 import br.com.bluesburguer.order.adapters.in.order.item.dto.OrderItemDto;
 import br.com.bluesburguer.order.adapters.in.user.dto.UserDto;
 import br.com.bluesburguer.order.adapters.in.user.dto.UserMapper;
+import br.com.bluesburguer.order.adapters.out.UserNotFoundException;
 import br.com.bluesburguer.order.adapters.out.persistence.entities.Order;
 import br.com.bluesburguer.order.adapters.out.persistence.entities.OrderItem;
 import lombok.RequiredArgsConstructor;
@@ -16,23 +16,16 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class OrderMapper {
 	
-	private final UserMapper userAssembler;
+	private final UserMapper userMapper;
 
 	public OrderDto to(Order order) {
-		var dto = new OrderDto();
-		dto.setFase(order.getFase());
-		dto.setId(order.getId()); 
-		dto.setStep(order.getStep());
-		order.getItems().forEach(item -> 
-			dto.getItems().add(this.to(item))
-		);
+		var items = order.getItems().stream().map(this::to).toList();
 		
-		dto.setUser(Optional.ofNullable(order.getUser())
-			.map(user -> new UserDto(user.getId(), 
-					Optional.ofNullable(user.getCpf()).orElse(null), 
-					user.getEmail()))
-			.orElseThrow(() -> new RuntimeException("Usuário não definido")));
-		return dto;
+		var userDto = new UserDto(order.getUser().getId(), 
+						Optional.ofNullable(order.getUser().getCpf()).orElse(null), 
+						order.getUser().getEmail());
+		
+		return new OrderDto(order.getId(), order.getStep(), order.getFase(), items, userDto);
 	}
 	
 	public OrderItemDto to(OrderItem orderItem) {
@@ -41,22 +34,16 @@ public class OrderMapper {
 	
 	public Order from(OrderDto orderDto) {
 		var user = Optional.ofNullable(orderDto.getUser())
-				.map(userAssembler::from)
-				.orElse(null);
-		var order = new Order(orderDto.getFase());
-		order.setUser(user);
+				.map(userMapper::from)
+				.orElseThrow(UserNotFoundException::new);
+		var order = new Order(orderDto.getFase(), user);
+		order.setId(orderDto.getId());
+		order.setStep(orderDto.getStep());
+		order.setFase(orderDto.getFase());
 		var items = orderDto.getItems().stream()
-			.map(itemDto -> {
-				var item = new OrderItem();
-				item.setId(itemDto.getId());
-				return item;				
-			})
+			.map(itemDto -> new OrderItem(itemDto.getId(), order))
 			.toArray(size -> new OrderItem[size]);
 		order.add(items);
 		return order;
 	}
-	
-	public OrderItem from(OrderItem item) {
-		throw new NotImplementedException();
-	}	
 }

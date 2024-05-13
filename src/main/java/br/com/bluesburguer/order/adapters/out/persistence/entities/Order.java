@@ -10,9 +10,11 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import br.com.bluesburguer.order.core.domain.OrderFase;
 import br.com.bluesburguer.order.core.domain.OrderStep;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -21,6 +23,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Builder.Default;
@@ -29,10 +32,12 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Getter
-@NoArgsConstructor
+@ToString(exclude = "items")
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @RequiredArgsConstructor
 @AllArgsConstructor
 @Table(schema = "bluesburguer-order", name = "TB_ORDER")
@@ -42,6 +47,7 @@ public class Order implements Serializable {
 	private static final long serialVersionUID = 4781858089323528412L;
 
 	@Id
+	@Setter
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -50,10 +56,6 @@ public class Order implements Serializable {
 
     @UpdateTimestamp
     private LocalDateTime updatedTime;
-
-    @Default
-    @NotNull
-    private Double totalValue = 0D;
     
     @Setter
     @Default
@@ -68,10 +70,11 @@ public class Order implements Serializable {
     private OrderFase fase;
 
     @Default
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<OrderItem> items = new ArrayList<>();
     
-    @Setter
+    @NonNull
+    @NotNull
 	@ManyToOne
     @JoinColumn(name = "user_id")
 	private OrderUser user;

@@ -20,6 +20,7 @@ import br.com.bluesburguer.order.adapters.in.order.dto.OrderMapper;
 import br.com.bluesburguer.order.adapters.in.order.dto.OrderRequest;
 import br.com.bluesburguer.order.adapters.in.order.item.dto.OrderItemRequest;
 import br.com.bluesburguer.order.adapters.in.order.utils.ResponseUtils;
+import br.com.bluesburguer.order.adapters.out.OrderFailToCreateException;
 import br.com.bluesburguer.order.adapters.out.OrderNotFoundException;
 import br.com.bluesburguer.order.core.domain.OrderFase;
 import br.com.bluesburguer.order.core.domain.OrderStep;
@@ -47,7 +48,7 @@ public class OrderRestResource {
 	public OrderDto getById(@PathVariable Long orderId) {
 		return orderService.getById(orderId)
 			.map(orderMapper::to)
-			.orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
+			.orElseThrow(OrderNotFoundException::new);
 	}
 	
 	@GetMapping("/step/{step}")
@@ -58,7 +59,7 @@ public class OrderRestResource {
 				.toList();
 	}
 	
-	@PostMapping(consumes = { MediaType.APPLICATION_JSON_VALUE })
+	@PostMapping(consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	public ResponseEntity<URI> createNewOrder(@Valid @RequestBody OrderRequest orderRequest) {
 		return orderService.createNewOrder(orderRequest)
 				.map(orderMapper::to)
@@ -67,33 +68,33 @@ public class OrderRestResource {
 					URI location = URI.create(orderId);
 					return ResponseUtils.<URI>created(location);
 				})
-				.orElseThrow(() -> new OrderNotFoundException("salvar"));
+				.orElseThrow(OrderFailToCreateException::new);
 	}
 	
 	@PutMapping(value = "/{orderId}")
-	public ResponseEntity<OrderDto> updateOrderItems(@PathVariable Long orderId, @Valid @RequestBody List<OrderItemRequest> orderItems) {
-		return orderService.update(orderId, orderItems)
+	public OrderDto updateOrderItems(@PathVariable Long orderId, @Valid @RequestBody List<OrderItemRequest> orderItems) {
+		return orderService.updateOrderItems(orderId, orderItems)
 				.map(orderMapper::to)
-				.map(ResponseEntity::ok)
-				.orElseThrow(() -> new OrderNotFoundException("salvar"));
+				.orElseThrow(OrderNotFoundException::new);
 	}
 	
 	@PutMapping(value = "/{orderId}/{step}/{fase}")
 	public OrderDto updateStepAndFase(@PathVariable Long orderId, @PathVariable OrderStep step, @PathVariable OrderFase fase) {
 		return orderService.updateStepAndFase(orderId, step, fase)
 				.map(orderMapper::to)
-				.orElseThrow(() -> new OrderNotFoundException("alterar"));
+				.orElseThrow(OrderNotFoundException::new);
 	}
 	
 	@PutMapping(value = "/{orderId}/{fase}")
 	public OrderDto updateFase(@PathVariable Long orderId, @PathVariable OrderFase fase) {
 		return orderService.updateFase(orderId, fase)
 				.map(orderMapper::to)
-				.orElseThrow(() -> new OrderNotFoundException("alterar"));
+				.orElseThrow(OrderNotFoundException::new);
 	}
 	
 	@DeleteMapping("/{orderId}")
-	public void deleteById(@PathVariable Long orderId) {
-		orderService.delete(orderId);
+	public ResponseEntity<Void> deleteById(@PathVariable Long orderId) {
+		orderService.deleteById(orderId);
+		return ResponseEntity.noContent().build();
 	}
 }

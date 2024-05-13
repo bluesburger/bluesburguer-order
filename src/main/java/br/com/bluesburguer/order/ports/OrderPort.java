@@ -24,11 +24,11 @@ public interface OrderPort {
 
 	Optional<Order> updateFase(Long orderId, OrderFase fase);
 	
-	Optional<Order> update(Long orderId, List<OrderItemRequest> orderItems);
+	Optional<Order> updateOrderItems(Long orderId, List<OrderItemRequest> orderItems);
 	
 	OrderItem saveItem(OrderItemRequest itemRequest, Order order);
 	
-	void delete(Long orderId);
+	void deleteById(Long orderId);
 	
-	OrderItem addItem(OrderItem item);
+	OrderItem addItem(Long orderId, OrderItemRequest itemRequest);
 }

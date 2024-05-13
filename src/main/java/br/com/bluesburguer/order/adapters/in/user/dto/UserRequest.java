@@ -8,17 +8,18 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import br.com.bluesburguer.order.core.domain.Cpf;
 import br.com.bluesburguer.order.core.domain.Email;
 import jakarta.persistence.Embedded;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString
 @Getter
 @Setter
+@ToString
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UserRequest implements Serializable {
 	
