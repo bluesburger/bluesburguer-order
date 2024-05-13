@@ -76,7 +76,7 @@
 	    <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 	    <sonar.language>java</sonar.language>
 	    <sonar.token>${env.SONAR_TOKEN}</sonar.token>
-	    <sonar.sources>src/test/resources/features</sonar.sources>
+	    <sonar.sources>src/main/java</sonar.sources>
 	</properties>
 	
 	<dependencies>
