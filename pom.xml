@@ -76,7 +76,6 @@
 	    <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 	    <sonar.language>java</sonar.language>
 	    <sonar.token>${env.SONAR_TOKEN}</sonar.token>
-	    <sonar.exclusions>**/CucumberTest.java</sonar.exclusions>
 	    <sonar.sources>src/test/resources/features</sonar.sources>
 	</properties>
 	
@@ -271,7 +270,6 @@
 			<groupId>io.cucumber</groupId>
 			<artifactId>cucumber-java</artifactId>
 			<version>7.13.0</version>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>io.cucumber</groupId>
@@ -431,14 +429,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
-                        <version>3.2.5</version>
-		                <dependencies>
-		                    <dependency>
-		                        <groupId>org.junit.jupiter</groupId>
-		                        <artifactId>junit-jupiter-engine</artifactId>
-		                        <version>5.9.1</version>
-		                    </dependency>
-		                </dependencies>
+                        <version>3.1.2</version>
                         <configuration>
                             <includes combine.self="override">
                                 <include>**/CucumberTest.java</include>
