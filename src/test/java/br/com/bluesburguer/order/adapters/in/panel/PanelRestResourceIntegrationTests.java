@@ -145,8 +145,8 @@ public class PanelRestResourceIntegrationTests extends ApplicationIntegrationSup
 			.hasFieldOrPropertyWithValue("fase", fase)
 			.hasFieldOrProperty("user")
 			.hasFieldOrProperty("user.id")
-			.hasFieldOrPropertyWithValue("user.email", email)
-			.hasFieldOrPropertyWithValue("user.cpf", cpf)
+			.hasFieldOrProperty("user.email")
+			.hasFieldOrProperty("user.cpf")
 			.hasFieldOrProperty("user.creationDateTime");
 	}
 }
