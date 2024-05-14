@@ -96,7 +96,7 @@ class UserServiceUnitTests {
 			Email email = null;
 			
 			doReturn(Optional.empty())
-				.when(userRepository).findByCpf(cpf.getValue());
+				.when(userRepository).findFirstByCpf(cpf.getValue());
 			
 			var savedUser = new OrderUser(userId, cpf.getValue(), null, LocalDateTime.now(), new ArrayList<>());
 			
@@ -114,8 +114,8 @@ class UserServiceUnitTests {
 				.hasFieldOrPropertyWithValue("email", email)
 				.hasFieldOrProperty("orders");
 			
-			verify(userRepository).findByCpf(cpf.getValue());
-			verify(userRepository, never()).findByEmail(anyString());
+			verify(userRepository).findFirstByCpf(cpf.getValue());
+			verify(userRepository, never()).findFirstByEmail(anyString());
 			verify(userRepository).save(any(OrderUser.class));
 		}
 		
@@ -126,7 +126,7 @@ class UserServiceUnitTests {
 			Email email = UserMocks.email();
 			
 			doReturn(Optional.empty())
-				.when(userRepository).findByEmail(email.getValue());
+				.when(userRepository).findFirstByEmail(email.getValue());
 			
 			var savedUser = new OrderUser(userId, null, email.getValue(), LocalDateTime.now(), new ArrayList<>());
 			
@@ -144,8 +144,8 @@ class UserServiceUnitTests {
 				.hasFieldOrPropertyWithValue("email", email.getValue())
 				.hasFieldOrProperty("orders");
 			
-			verify(userRepository, never()).findByCpf(anyString());
-			verify(userRepository).findByEmail(email.getValue());
+			verify(userRepository, never()).findFirstByCpf(anyString());
+			verify(userRepository).findFirstByEmail(email.getValue());
 			verify(userRepository).save(any(OrderUser.class));
 		}
 		
@@ -171,8 +171,8 @@ class UserServiceUnitTests {
 				.hasFieldOrPropertyWithValue("email", null)
 				.hasFieldOrProperty("orders");
 			
-			verify(userRepository, never()).findByCpf(anyString());
-			verify(userRepository, never()).findByEmail(anyString());
+			verify(userRepository, never()).findFirstByCpf(anyString());
+			verify(userRepository, never()).findFirstByEmail(anyString());
 			verify(userRepository).save(any(OrderUser.class));
 		}
 		
@@ -185,15 +185,15 @@ class UserServiceUnitTests {
 			var existantUser = UserMocks.user(userId);
 			
 			doReturn(Optional.of(existantUser))
-				.when(userRepository).findByCpf(cpfParam.getValue());
+				.when(userRepository).findFirstByCpf(cpfParam.getValue());
 			
 			var optionalUser = userService.saveIfNotExist(cpfParam, emailParam);
 			assertThat(optionalUser)
 				.isNotNull()
 				.isEqualTo(existantUser);
 			
-			verify(userRepository).findByCpf(cpfParam.getValue());
-			verify(userRepository, never()).findByEmail(anyString());
+			verify(userRepository).findFirstByCpf(cpfParam.getValue());
+			verify(userRepository, never()).findFirstByEmail(anyString());
 			verify(userRepository, never()).save(any(OrderUser.class));
 		}
 		
@@ -206,15 +206,15 @@ class UserServiceUnitTests {
 			var existantUser = UserMocks.user(userId);
 			
 			doReturn(Optional.of(existantUser))
-				.when(userRepository).findByEmail(emailParam.getValue());
+				.when(userRepository).findFirstByEmail(emailParam.getValue());
 			
 			var optionalUser = userService.saveIfNotExist(cpfParam, emailParam);
 			assertThat(optionalUser)
 				.isNotNull()
 				.isEqualTo(existantUser);
 			
-			verify(userRepository, never()).findByCpf(anyString());
-			verify(userRepository).findByEmail(emailParam.getValue());
+			verify(userRepository, never()).findFirstByCpf(anyString());
+			verify(userRepository).findFirstByEmail(emailParam.getValue());
 			verify(userRepository, never()).save(any(OrderUser.class));
 		}
 	}

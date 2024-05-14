@@ -41,14 +41,14 @@ public class UserService implements UserPort {
 	public OrderUser saveIfNotExist(Cpf cpf, Email email) {
 		
 		if (Objects.nonNull(cpf)) {
-			var userOptional = userRepository.findByCpf(cpf.getValue());
+			var userOptional = userRepository.findFirstByCpf(cpf.getValue());
 			if (userOptional.isPresent()) {
 				return userOptional.get();
 			}
 		}
 		
 		if (Objects.nonNull(email)) {
-			var userOptional = userRepository.findByEmail(email.getValue());
+			var userOptional = userRepository.findFirstByEmail(email.getValue());
 			if (userOptional.isPresent()) {
 				return userOptional.get();
 			}

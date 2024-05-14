@@ -85,7 +85,7 @@ class OrderRestResourceIntegrationTests extends ApplicationIntegrationSupport {
 		void givenOneExistantOrderwhenMockMVCGetById_thenReturnExistantOrder() throws Exception {
 			var order = OrderMocks.order(EXISTANT_ORDER_ID);
 			doReturn(Optional.of(order))
-				.when(orderService).getById(order.getId());
+				.when(orderService).getById(UUID.fromString(order.getId()));
 			
 			mockMvc
 					.perform(get("/api/order/{orderId}", order.getId()))

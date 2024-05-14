@@ -8,6 +8,7 @@ import java.util.List;
 import org.hibernate.annotations.CreationTimestamp;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -36,15 +37,19 @@ public class OrderUser implements Serializable {
 
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "ID")
     private Long id;
 	
 	@Setter
+	@Column(name = "CPF")
 	private String cpf;
 	
 	@Setter
+	@Column(name = "EMAIL")
 	private String email;
 	
 	@CreationTimestamp
+	@Column(name = "CREATION_DATE_TIME")
     private LocalDateTime creationDateTime;
 	
 	@Default

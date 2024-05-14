@@ -74,7 +74,7 @@ public class OrderMocks {
 		var createdTime = LocalDateTime.now();
 		var updatedTime = LocalDateTime.now();
 		List<OrderItem> items = new ArrayList<>();
-		return new Order(orderId, createdTime, updatedTime, step, fase, items, user);
+		return new Order(orderId.toString(), createdTime, updatedTime, step, fase, items, user);
 	}
 	
 	public static OrderItem orderItem(long orderItem, Order order) {

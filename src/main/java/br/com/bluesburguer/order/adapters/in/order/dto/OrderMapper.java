@@ -1,6 +1,7 @@
 package br.com.bluesburguer.order.adapters.in.order.dto;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.stereotype.Component;
 
@@ -25,7 +26,7 @@ public class OrderMapper {
 						Optional.ofNullable(order.getUser().getCpf()).orElse(null), 
 						order.getUser().getEmail());
 		
-		return new OrderDto(order.getId(), order.getStep(), order.getFase(), items, userDto);
+		return new OrderDto(UUID.fromString(order.getId()), order.getStep(), order.getFase(), items, userDto);
 	}
 	
 	public OrderItemDto to(OrderItem orderItem) {
@@ -37,7 +38,7 @@ public class OrderMapper {
 				.map(userMapper::from)
 				.orElseThrow(UserNotFoundException::new);
 		var order = new Order(orderDto.getFase(), user);
-		order.setId(orderDto.getId());
+		order.setId(orderDto.getId().toString());
 		order.setStep(orderDto.getStep());
 		order.setFase(orderDto.getFase());
 		var items = orderDto.getItems().stream()

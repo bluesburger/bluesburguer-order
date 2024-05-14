@@ -152,7 +152,7 @@ class OrderServiceIntegrationTests extends ApplicationIntegrationSupport {
 			
 			validatePersistedOrder(newOrderOpt, step, fase, cpf, email);
 			
-			assertThat(orderService.getById(newOrderOpt.get().getId()))
+			assertThat(orderService.getById(UUID.fromString(newOrderOpt.get().getId())))
 				.isPresent()
 				.get()
 				.hasFieldOrProperty("id")
@@ -235,7 +235,7 @@ class OrderServiceIntegrationTests extends ApplicationIntegrationSupport {
 			validatePersistedOrder(createdOrder, step, fase, cpf, email);
 			var newStep = OrderStep.KITCHEN;
 			var newFase = OrderFase.IN_PROGRESS;
-			assertThat(orderService.updateStepAndFase(createdOrder.get().getId(), newStep, newFase))
+			assertThat(orderService.updateStepAndFase(UUID.fromString(createdOrder.get().getId()), newStep, newFase))
 				.isPresent()
 				.get()
 				.hasFieldOrProperty("id")
@@ -271,7 +271,7 @@ class OrderServiceIntegrationTests extends ApplicationIntegrationSupport {
 			
 			validatePersistedOrder(createdOrder, step, fase, cpf, email);
 			var newFase = OrderFase.IN_PROGRESS;
-			assertThat(orderService.updateFase(createdOrder.get().getId(), newFase))
+			assertThat(orderService.updateFase(UUID.fromString(createdOrder.get().getId()), newFase))
 				.isPresent()
 				.get()
 				.hasFieldOrProperty("id")
@@ -308,7 +308,7 @@ class OrderServiceIntegrationTests extends ApplicationIntegrationSupport {
 			validatePersistedOrder(createdOrder, step, fase, cpf, email);
 			
 			var orderItems = List.of(new OrderItemRequest(1L, 1));
-			assertThat(orderService.updateOrderItems(createdOrder.get().getId(), orderItems))
+			assertThat(orderService.updateOrderItems(UUID.fromString(createdOrder.get().getId()), orderItems))
 				.isPresent()
 				.get()
 				.hasFieldOrProperty("id")
@@ -367,7 +367,7 @@ class OrderServiceIntegrationTests extends ApplicationIntegrationSupport {
 			
 			validatePersistedOrder(createdOrder, step, fase, cpf, email);
 			
-			orderService.deleteById(createdOrder.get().getId());
+			orderService.deleteById(UUID.fromString(createdOrder.get().getId()));
 		}
 		
 		@Test
@@ -394,7 +394,7 @@ class OrderServiceIntegrationTests extends ApplicationIntegrationSupport {
 			
 			var item = new OrderItemRequest(1L, quantity);
 			var orderId = createdOrder.get().getId();
-			assertThat(orderService.addItem(orderId, item))
+			assertThat(orderService.addItem(UUID.fromString(orderId), item))
 				.hasFieldOrProperty("id")
 				.hasFieldOrProperty("order")
 				.hasFieldOrPropertyWithValue("quantity", quantity)

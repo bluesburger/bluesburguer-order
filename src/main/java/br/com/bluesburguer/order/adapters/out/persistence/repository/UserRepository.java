@@ -8,9 +8,9 @@ import br.com.bluesburguer.order.adapters.out.persistence.entities.OrderUser;
 
 public interface UserRepository extends JpaRepository<OrderUser, Long> {
 
-	Optional<OrderUser> findByCpf(String cpf);
+	Optional<OrderUser> findFirstByCpf(String cpf);
 	
-	Optional<OrderUser> findByEmail(String email);
+	Optional<OrderUser> findFirstByEmail(String email);
 
-	Optional<OrderUser> findByCpfEqualsOrEmailEquals(String cpf, String email);
+	Optional<OrderUser> findFirstByCpfEqualsOrEmailEquals(String cpf, String email);
 }

@@ -12,6 +12,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import br.com.bluesburguer.order.core.domain.OrderFase;
 import br.com.bluesburguer.order.core.domain.OrderStep;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -50,24 +51,29 @@ public class Order implements Serializable {
 	@Id
 	@Setter
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+	@Column(name = "ID", columnDefinition = "varchar(100)")
+    private String id;
 
     @CreationTimestamp
+    @Column(name = "CREATED_TIME")
     private LocalDateTime createdTime;
 
     @UpdateTimestamp
+    @Column(name = "UPDATED_TIME")
     private LocalDateTime updatedTime;
     
     @Setter
     @Default
     @NotNull
     @Enumerated(EnumType.STRING)
+    @Column(name = "STEP")
     private OrderStep step = OrderStep.ORDER;
     
     @Setter
     @NonNull
     @NotNull
     @Enumerated(EnumType.STRING)
+    @Column(name = "FASE")
     private OrderFase fase;
 
     @Default
@@ -77,7 +83,7 @@ public class Order implements Serializable {
     @NonNull
     @NotNull
 	@ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "USER_ID")
 	private OrderUser user;
     
     public void add(OrderItem... items) {

@@ -44,7 +44,7 @@ public class OrderService implements OrderPort {
 	}
 
 	public Optional<Order> getById(UUID orderId) {
-		return orderRepository.findById(orderId);
+		return orderRepository.findById(orderId.toString());
 	}
 	
 	public Optional<OrderItem> getItemByOrderItemId(Long orderItemId) {
@@ -124,7 +124,7 @@ public class OrderService implements OrderPort {
 			dontRollbackOn = EntityExistsException.class)
 	public void deleteById(UUID orderId) {
 		var order = getById(orderId).orElseThrow(OrderNotFoundException::new);
-		orderItemRepository.deleteAllByOrderId(orderId);
+		orderItemRepository.deleteAllByOrderId(orderId.toString());
 		orderRepository.delete(order);
 	}
 
@@ -133,7 +133,7 @@ public class OrderService implements OrderPort {
 			dontRollbackOn = EntityExistsException.class)
 	public OrderItem addItem(UUID orderId, OrderItemRequest itemRequest) {
 		return Optional.ofNullable(orderId)
-				.map(oId -> orderRepository.findById(oId).orElseThrow(OrderNotFoundException::new))
+				.map(oId -> orderRepository.findById(oId.toString()).orElseThrow(OrderNotFoundException::new))
 				.map(order -> {
 					var item = new OrderItem(itemRequest.getId(), order);
 					item.setQuantity(itemRequest.getQuantity());

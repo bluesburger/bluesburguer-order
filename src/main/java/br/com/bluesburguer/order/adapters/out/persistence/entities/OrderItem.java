@@ -41,27 +41,31 @@ public class OrderItem implements Serializable {
 	@Id
 	@Setter
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "ID")
     private Long id;
 	
 	@NonNull
 	@NotNull
+	@Column(name = "ORDER_ITEM_ID")
 	private Long orderItemId;
 	
 	@Setter
 	@NonNull
 	@NotNull
 	@ManyToOne
-    @JoinColumn(name = "order_id")
+    @JoinColumn(name = "ORDER_ID")
 	private Order order;
 	
 	@Setter
 	@Default
-	@Column
+	@Column(name = "QUANTITY")
 	private Integer quantity = 1;
 	
 	@CreationTimestamp
+	@Column(name = "CREATED_TIME")
     private LocalDateTime createdTime;
 
     @UpdateTimestamp
+    @Column(name = "UPDATED_TIME")
     private LocalDateTime updatedTime;
 }
