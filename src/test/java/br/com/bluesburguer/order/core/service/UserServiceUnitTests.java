@@ -96,7 +96,7 @@ class UserServiceUnitTests {
 			Email email = null;
 			
 			doReturn(Optional.empty())
-				.when(userRepository).findFirstByCpf(cpf.getValue());
+				.when(userRepository).findFirstByCpfOrderByIdAsc(cpf.getValue());
 			
 			var savedUser = new OrderUser(userId, cpf.getValue(), null, LocalDateTime.now(), new ArrayList<>());
 			
@@ -114,8 +114,8 @@ class UserServiceUnitTests {
 				.hasFieldOrPropertyWithValue("email", email)
 				.hasFieldOrProperty("orders");
 			
-			verify(userRepository).findFirstByCpf(cpf.getValue());
-			verify(userRepository, never()).findFirstByEmail(anyString());
+			verify(userRepository).findFirstByCpfOrderByIdAsc(cpf.getValue());
+			verify(userRepository, never()).findFirstByEmailOrderByIdAsc(anyString());
 			verify(userRepository).save(any(OrderUser.class));
 		}
 		
@@ -126,7 +126,7 @@ class UserServiceUnitTests {
 			Email email = UserMocks.email();
 			
 			doReturn(Optional.empty())
-				.when(userRepository).findFirstByEmail(email.getValue());
+				.when(userRepository).findFirstByEmailOrderByIdAsc(email.getValue());
 			
 			var savedUser = new OrderUser(userId, null, email.getValue(), LocalDateTime.now(), new ArrayList<>());
 			
@@ -144,8 +144,8 @@ class UserServiceUnitTests {
 				.hasFieldOrPropertyWithValue("email", email.getValue())
 				.hasFieldOrProperty("orders");
 			
-			verify(userRepository, never()).findFirstByCpf(anyString());
-			verify(userRepository).findFirstByEmail(email.getValue());
+			verify(userRepository, never()).findFirstByCpfOrderByIdAsc(anyString());
+			verify(userRepository).findFirstByEmailOrderByIdAsc(email.getValue());
 			verify(userRepository).save(any(OrderUser.class));
 		}
 		
@@ -171,8 +171,8 @@ class UserServiceUnitTests {
 				.hasFieldOrPropertyWithValue("email", null)
 				.hasFieldOrProperty("orders");
 			
-			verify(userRepository, never()).findFirstByCpf(anyString());
-			verify(userRepository, never()).findFirstByEmail(anyString());
+			verify(userRepository, never()).findFirstByCpfOrderByIdAsc(anyString());
+			verify(userRepository, never()).findFirstByEmailOrderByIdAsc(anyString());
 			verify(userRepository).save(any(OrderUser.class));
 		}
 		
@@ -185,15 +185,15 @@ class UserServiceUnitTests {
 			var existantUser = UserMocks.user(userId);
 			
 			doReturn(Optional.of(existantUser))
-				.when(userRepository).findFirstByCpf(cpfParam.getValue());
+				.when(userRepository).findFirstByCpfOrderByIdAsc(cpfParam.getValue());
 			
 			var optionalUser = userService.saveIfNotExist(cpfParam, emailParam);
 			assertThat(optionalUser)
 				.isNotNull()
 				.isEqualTo(existantUser);
 			
-			verify(userRepository).findFirstByCpf(cpfParam.getValue());
-			verify(userRepository, never()).findFirstByEmail(anyString());
+			verify(userRepository).findFirstByCpfOrderByIdAsc(cpfParam.getValue());
+			verify(userRepository, never()).findFirstByEmailOrderByIdAsc(anyString());
 			verify(userRepository, never()).save(any(OrderUser.class));
 		}
 		
@@ -206,84 +206,16 @@ class UserServiceUnitTests {
 			var existantUser = UserMocks.user(userId);
 			
 			doReturn(Optional.of(existantUser))
-				.when(userRepository).findFirstByEmail(emailParam.getValue());
+				.when(userRepository).findFirstByEmailOrderByIdAsc(emailParam.getValue());
 			
 			var optionalUser = userService.saveIfNotExist(cpfParam, emailParam);
 			assertThat(optionalUser)
 				.isNotNull()
 				.isEqualTo(existantUser);
 			
-			verify(userRepository, never()).findFirstByCpf(anyString());
-			verify(userRepository).findFirstByEmail(emailParam.getValue());
+			verify(userRepository, never()).findFirstByCpfOrderByIdAsc(anyString());
+			verify(userRepository).findFirstByEmailOrderByIdAsc(emailParam.getValue());
 			verify(userRepository, never()).save(any(OrderUser.class));
-		}
-	}
-	
-	@Nested
-	class CreateUser {
-		
-		@Test
-		void givenOnlyCpf_WhenCreateIdentifiedUser_ThenShouldSaveNewUserWithCpf() {
-			long userId = 1L;
-			Cpf cpfParam = UserMocks.cpf();
-			Email emailParam = null;
-			
-			var savedUser = new OrderUser(userId, cpfParam.getValue(), null, LocalDateTime.now(), new ArrayList<>());
-			doReturn(savedUser)
-				.when(userRepository).save(any(OrderUser.class));
-			
-			assertThat(userService.createUser(cpfParam, emailParam))
-				.isEqualTo(savedUser);
-			
-			verify(userRepository).save(any(OrderUser.class));
-		}
-		
-		@Test
-		void givenOnlyEmail_WhenCreateIdentifiedUser_ThenShouldSaveNewUserWithEmail() {
-			long userId = 1L;
-			Cpf cpfParam = null;
-			Email emailParam = UserMocks.email();
-			
-			var savedUser = new OrderUser(userId, null, emailParam.getValue(), LocalDateTime.now(), new ArrayList<>());
-			doReturn(savedUser)
-				.when(userRepository).save(any(OrderUser.class));
-			
-			assertThat(userService.createUser(cpfParam, emailParam))
-				.isEqualTo(savedUser);
-			
-			verify(userRepository).save(any(OrderUser.class));
-		}
-		
-		@Test
-		void givenCpfAndEmail_WhenCreateIdentifiedUser_ThenShouldSaveNewUserWithCpfAndEmail() {
-			long userId = 1L;
-			Cpf cpfParam = UserMocks.cpf();
-			Email emailParam = UserMocks.email();
-			
-			var savedUser = new OrderUser(userId, cpfParam.getValue(), emailParam.getValue(), LocalDateTime.now(), new ArrayList<>());
-			doReturn(savedUser)
-				.when(userRepository).save(any(OrderUser.class));
-			
-			assertThat(userService.createUser(cpfParam, emailParam))
-				.isEqualTo(savedUser);
-			
-			verify(userRepository).save(any(OrderUser.class));
-		}
-		
-		@Test
-		void givenNullParams_WhenCreateIdentifiedUser_ThenShouldSaveNewUserWithNullCpfAndNullEmail() {
-			long userId = 1L;
-			Cpf cpfParam = null;
-			Email emailParam = null;
-			
-			var savedUser = new OrderUser(userId, null, null, LocalDateTime.now(), new ArrayList<>());
-			doReturn(savedUser)
-				.when(userRepository).save(any(OrderUser.class));
-			
-			assertThat(userService.createUser(cpfParam, emailParam))
-				.isEqualTo(savedUser);
-			
-			verify(userRepository).save(any(OrderUser.class));
 		}
 	}
 }

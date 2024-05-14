@@ -14,6 +14,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -33,6 +35,7 @@ import br.com.bluesburguer.order.adapters.in.order.dto.OrderRequest;
 import br.com.bluesburguer.order.adapters.out.OrderFailToCreateException;
 import br.com.bluesburguer.order.adapters.out.OrderNotFoundException;
 import br.com.bluesburguer.order.adapters.out.persistence.entities.Order;
+import br.com.bluesburguer.order.adapters.out.persistence.entities.OrderItem;
 import br.com.bluesburguer.order.adapters.out.persistence.entities.OrderUser;
 import br.com.bluesburguer.order.core.domain.OrderFase;
 import br.com.bluesburguer.order.core.domain.OrderStep;
@@ -123,7 +126,12 @@ class OrderRestResourceIntegrationTests extends ApplicationIntegrationSupport {
 			OrderUser user = new OrderUser();
 			user.setCpf(OrderMocks.mockCpf());
 			user.setEmail(OrderMocks.mockEmail());
-			doReturn(List.of(new Order(fase, user)))
+			var id = EXISTANT_ORDER_ID.toString();
+			var createdTime = LocalDateTime.now();
+			var updatedTime = LocalDateTime.now();
+			var order = new Order(id, createdTime, updatedTime, step, fase, new ArrayList<OrderItem>(), user);
+			order.add(new OrderItem(1L, 1L, order, 1, createdTime, updatedTime));
+			doReturn(List.of(order))
 				.when(orderService).getAllByStep(step, null);
 			
 			mockMvc

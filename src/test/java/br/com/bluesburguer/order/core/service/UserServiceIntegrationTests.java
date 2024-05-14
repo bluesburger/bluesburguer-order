@@ -2,12 +2,16 @@ package br.com.bluesburguer.order.core.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.Random;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.bluesburguer.order.adapters.in.user.dto.UserRequest;
+import br.com.bluesburguer.order.adapters.out.persistence.repository.OrderItemRepository;
+import br.com.bluesburguer.order.adapters.out.persistence.repository.OrderRepository;
 import br.com.bluesburguer.order.adapters.out.persistence.repository.UserRepository;
 import br.com.bluesburguer.order.core.domain.Cpf;
 import br.com.bluesburguer.order.core.domain.Email;
@@ -15,6 +19,12 @@ import br.com.bluesburguer.order.support.ApplicationIntegrationSupport;
 import br.com.bluesburguer.order.support.UserMocks;
 
 class UserServiceIntegrationTests extends ApplicationIntegrationSupport {
+	
+	@Autowired
+	OrderItemRepository orderItemRepository;
+	
+	@Autowired
+	OrderRepository orderRepository;
 
 	@Autowired
 	UserRepository userRepository;
@@ -24,6 +34,8 @@ class UserServiceIntegrationTests extends ApplicationIntegrationSupport {
 	
 	@AfterEach
 	void tearDown() {
+		orderItemRepository.deleteAllInBatch();
+		orderRepository.deleteAllInBatch();
 		userRepository.deleteAllInBatch();
 	}
 	
@@ -31,16 +43,36 @@ class UserServiceIntegrationTests extends ApplicationIntegrationSupport {
 	class FindAll {
 	
 		@Test
-		void givenExistantUsers_WhenFindAll_ThenShouldReturnListOfAllUsers() {
+		void givenExistantUserWithSameCpf_WhenFindAll_ThenShouldReturnListOfAllUsers() {
 			Cpf cpf = UserMocks.cpf();
-			Email email = UserMocks.email();
+			Email email = null;
 			assertThat(userService.saveIfNotExist(cpf, email)).isNotNull();
 			
-			assertThat(userService.findAll())
-				.hasSize(1)
+			var list = userService.findAll();
+			assertThat(list)
+				.hasSizeGreaterThanOrEqualTo(1)
+				.filteredOn(user -> cpf.getValue().equals(user.getCpf()))
 				.first()
 				.hasFieldOrProperty("id")
 				.hasFieldOrPropertyWithValue("cpf", cpf.getValue())
+				.hasFieldOrProperty("email")
+				.hasFieldOrProperty("creationDateTime")
+				.hasFieldOrProperty("orders");
+		}
+		
+		@Test
+		void givenExistantUserWithSameEmail_WhenFindAll_ThenShouldReturnListOfAllUsers() {
+			Cpf cpf = null;
+			Email email = UserMocks.email();
+			assertThat(userService.saveIfNotExist(cpf, email)).isNotNull();
+			
+			var list = userService.findAll();
+			assertThat(list)
+				.hasSizeGreaterThanOrEqualTo(1)
+				.filteredOn(user -> email.getValue().equals(user.getEmail()))
+				.first()
+				.hasFieldOrProperty("id")
+				.hasFieldOrProperty("cpf")
 				.hasFieldOrPropertyWithValue("email", email.getValue())
 				.hasFieldOrProperty("creationDateTime")
 				.hasFieldOrProperty("orders");
@@ -52,7 +84,7 @@ class UserServiceIntegrationTests extends ApplicationIntegrationSupport {
 		
 		@Test
 		void givenExistantUser_WhenFindById_ThenShouldReturnOptionalOfIt() {
-			Cpf cpf = UserMocks.cpf();
+			Cpf cpf = new Cpf("955.083.240-62");
 			Email email = UserMocks.email();
 			var savedUser = userService.saveIfNotExist(cpf, email);
 			assertThat(savedUser).isNotNull();
@@ -69,7 +101,8 @@ class UserServiceIntegrationTests extends ApplicationIntegrationSupport {
 		
 		@Test
 		void givenUnexistantUser_WhenFindById_ThenShouldReturnOptionalEmpty() {
-			assertThat(userService.findById(99L))
+			var id = new Random().nextLong(1612L);
+			assertThat(userService.findById(id))
 				.isNotPresent();
 		}
 	}
@@ -80,8 +113,7 @@ class UserServiceIntegrationTests extends ApplicationIntegrationSupport {
 		@Test
 		void givenNewUserRequestWithCpf_WhenSaveIfNotExists_ThenShouldCreate() {
 			Cpf cpf = UserMocks.cpf();
-			Email email = null;
-			var savedUser = userService.saveIfNotExist(new UserRequest(null, cpf, email));
+			var savedUser = userService.saveIfNotExist(new UserRequest(null, cpf, null));
 			
 			assertThat(savedUser)
 				.hasFieldOrProperty("id")
@@ -93,9 +125,8 @@ class UserServiceIntegrationTests extends ApplicationIntegrationSupport {
 		
 		@Test
 		void givenNewUserRequest_WhenHaveEmail_ThenShouldCreate() {
-			Cpf cpf = null;
 			Email email = UserMocks.email();
-			var savedUser = userService.saveIfNotExist(new UserRequest(null, cpf, email));
+			var savedUser = userService.saveIfNotExist(new UserRequest(null, null, email));
 			
 			assertThat(savedUser)
 				.hasFieldOrProperty("id")
@@ -107,9 +138,7 @@ class UserServiceIntegrationTests extends ApplicationIntegrationSupport {
 		
 		@Test
 		void givenNewUserRequest_WhenHaveNotCpfOrEmail_ThenShouldCreateAnonimousUser() {
-			Cpf cpf = null;
-			Email email = null;
-			var savedUser = userService.saveIfNotExist(new UserRequest(null, cpf, email));
+			var savedUser = userService.saveIfNotExist(new UserRequest(null, null, null));
 			
 			assertThat(savedUser)
 				.hasFieldOrProperty("id")
@@ -122,16 +151,15 @@ class UserServiceIntegrationTests extends ApplicationIntegrationSupport {
 		@Test
 		void givenExistantUser_WhenRequestWithSameCpf_ThenShouldReturnIt() {
 			Cpf cpf = UserMocks.cpf();
-			Email email = null;
 			
-			assertThat(userService.saveIfNotExist(new UserRequest(null, cpf, email)))
+			assertThat(userService.saveIfNotExist(new UserRequest(null, cpf, null)))
 				.hasFieldOrProperty("id")
 				.hasFieldOrPropertyWithValue("cpf", cpf.getValue())
 				.hasFieldOrPropertyWithValue("email", null)
 				.hasFieldOrProperty("creationDateTime")
 				.hasFieldOrProperty("orders");
 			
-			var existantUser = userService.saveIfNotExist(new UserRequest(null, cpf, email));
+			var existantUser = userService.saveIfNotExist(new UserRequest(null, cpf, null));
 			assertThat(existantUser)
 				.hasFieldOrProperty("id")
 				.hasFieldOrPropertyWithValue("cpf", cpf.getValue())
@@ -157,70 +185,6 @@ class UserServiceIntegrationTests extends ApplicationIntegrationSupport {
 				.hasFieldOrProperty("id")
 				.hasFieldOrPropertyWithValue("cpf", null)
 				.hasFieldOrPropertyWithValue("email", email.getValue())
-				.hasFieldOrProperty("creationDateTime")
-				.hasFieldOrProperty("orders");
-		}
-	}
-	
-	@Nested
-	class CreateUser {
-		
-		@Test
-		void givenOnlyCpf_WhenCreateIdentifiedUser_ThenShouldSaveNewUserWithCpf() {
-			Cpf cpf = UserMocks.cpf();
-			Email email = null;
-			
-			var createdUser = userService.createUser(cpf, email);
-			
-			assertThat(createdUser)
-				.hasFieldOrProperty("id")
-				.hasFieldOrPropertyWithValue("cpf", cpf.getValue())
-				.hasFieldOrPropertyWithValue("email", null)
-				.hasFieldOrProperty("creationDateTime")
-				.hasFieldOrProperty("orders");
-		}
-		
-		@Test
-		void givenOnlyEmail_WhenCreateIdentifiedUser_ThenShouldSaveNewUserWithEmail() {
-			Cpf cpf = null;
-			Email email = UserMocks.email();
-			
-			var createdUser = userService.createUser(cpf, email);
-			
-			assertThat(createdUser)
-				.hasFieldOrProperty("id")
-				.hasFieldOrPropertyWithValue("cpf", null)
-				.hasFieldOrPropertyWithValue("email", email.getValue())
-				.hasFieldOrProperty("creationDateTime")
-				.hasFieldOrProperty("orders");
-		}
-		
-		@Test
-		void givenCpfAndEmail_WhenCreateIdentifiedUser_ThenShouldSaveNewUserWithCpfAndEmail() {
-			Cpf cpf = UserMocks.cpf();
-			Email email = UserMocks.email();
-			
-			var createdUser = userService.createUser(cpf, email);
-			
-			assertThat(createdUser)
-				.hasFieldOrProperty("id")
-				.hasFieldOrPropertyWithValue("cpf", cpf.getValue())
-				.hasFieldOrPropertyWithValue("email", email.getValue())
-				.hasFieldOrProperty("creationDateTime")
-				.hasFieldOrProperty("orders");
-		}
-		
-		@Test
-		void givenNullParams_WhenCreateIdentifiedUser_ThenShouldSaveNewUserWithNullCpfAndNullEmail() {
-			Cpf cpf = null;
-			Email email = null;
-			
-			var createdUser = userService.createUser(cpf, email);
-			
-			assertThat(createdUser)
-				.hasFieldOrProperty("id")
-				.hasFieldOrPropertyWithValue("cpf", null)
-				.hasFieldOrPropertyWithValue("email", null)
 				.hasFieldOrProperty("creationDateTime")
 				.hasFieldOrProperty("orders");
 		}

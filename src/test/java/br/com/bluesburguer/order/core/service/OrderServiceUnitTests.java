@@ -239,7 +239,7 @@ class OrderServiceUnitTests {
 			assertThat(updatedReturn)
 				.isPresent()
 				.get()
-				.hasFieldOrPropertyWithValue("id", EXISTANT_ORDER_ID)
+				.hasFieldOrPropertyWithValue("id", EXISTANT_ORDER_ID.toString())
 				.hasFieldOrPropertyWithValue("step", step)
 				.hasFieldOrPropertyWithValue("fase", fase)
 				.hasFieldOrProperty("user")
@@ -316,7 +316,7 @@ class OrderServiceUnitTests {
 			assertThat(updatedReturn)
 				.isPresent()
 				.get()
-				.hasFieldOrPropertyWithValue("id", EXISTANT_ORDER_ID)
+				.hasFieldOrPropertyWithValue("id", EXISTANT_ORDER_ID.toString())
 				.hasFieldOrPropertyWithValue("step", existantOrder.getStep())
 				.hasFieldOrPropertyWithValue("fase", fase)
 				.hasFieldOrProperty("user")
@@ -385,7 +385,7 @@ class OrderServiceUnitTests {
 			assertThat(orderService.updateOrderItems(EXISTANT_ORDER_ID, orderItems))
 				.isPresent()
 				.get()
-				.hasFieldOrPropertyWithValue("id", EXISTANT_ORDER_ID)
+				.hasFieldOrPropertyWithValue("id", EXISTANT_ORDER_ID.toString())
 				.hasFieldOrPropertyWithValue("step", existantOrder.getStep())
 				.hasFieldOrPropertyWithValue("fase", existantOrder.getFase())
 				.hasFieldOrProperty("user")
@@ -447,7 +447,7 @@ class OrderServiceUnitTests {
 			
 			verify(orderRepository).findById(EXISTANT_ORDER_ID.toString());
 			verify(orderItemRepository).deleteAllByOrderId(EXISTANT_ORDER_ID.toString());
-			verify(orderRepository).delete(order);
+			verify(orderRepository).deleteById(EXISTANT_ORDER_ID.toString());
 		}
 		
 		@Test

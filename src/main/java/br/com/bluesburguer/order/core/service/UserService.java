@@ -41,14 +41,14 @@ public class UserService implements UserPort {
 	public OrderUser saveIfNotExist(Cpf cpf, Email email) {
 		
 		if (Objects.nonNull(cpf)) {
-			var userOptional = userRepository.findFirstByCpf(cpf.getValue());
+			var userOptional = userRepository.findFirstByCpfOrderByIdAsc(cpf.getValue());
 			if (userOptional.isPresent()) {
 				return userOptional.get();
 			}
 		}
 		
 		if (Objects.nonNull(email)) {
-			var userOptional = userRepository.findFirstByEmail(email.getValue());
+			var userOptional = userRepository.findFirstByEmailOrderByIdAsc(email.getValue());
 			if (userOptional.isPresent()) {
 				return userOptional.get();
 			}
@@ -56,8 +56,7 @@ public class UserService implements UserPort {
 		return createUser(cpf, email);
 	}
 	
-	@Override
-	public OrderUser createUser(Cpf cpf, Email email) {
+	private OrderUser createUser(Cpf cpf, Email email) {
 		var newUser = new OrderUser();
 		newUser.setCpf(Optional.ofNullable(cpf).map(Cpf::getValue).orElse(null));
 		newUser.setEmail(Optional.ofNullable(email).map(Email::getValue).orElse(null));

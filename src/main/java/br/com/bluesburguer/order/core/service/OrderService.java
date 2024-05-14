@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import br.com.bluesburguer.order.adapters.in.order.dto.OrderRequest;
 import br.com.bluesburguer.order.adapters.in.order.item.dto.OrderItemRequest;
 import br.com.bluesburguer.order.adapters.out.OrderNotFoundException;
+import br.com.bluesburguer.order.adapters.out.UserNotFoundException;
 import br.com.bluesburguer.order.adapters.out.persistence.entities.Order;
 import br.com.bluesburguer.order.adapters.out.persistence.entities.OrderItem;
 import br.com.bluesburguer.order.adapters.out.persistence.repository.OrderItemRepository;
@@ -56,12 +57,12 @@ public class OrderService implements OrderPort {
 	}
 
 	@Transactional(
-			rollbackOn = IllegalArgumentException.class, 
+			rollbackOn = UserNotFoundException.class, 
 			dontRollbackOn = EntityExistsException.class)
 	public Optional<Order> createNewOrder(OrderRequest command) {
 		var orderUser = Optional.ofNullable(command.getUser())
 				.map(userService::saveIfNotExist)
-				.orElse(userService.createUser(null, null));
+				.orElseThrow(UserNotFoundException::new);
 		
 		var newOrder = new Order(OrderFase.PENDING, orderUser);
 		
@@ -124,8 +125,8 @@ public class OrderService implements OrderPort {
 			dontRollbackOn = EntityExistsException.class)
 	public void deleteById(UUID orderId) {
 		var order = getById(orderId).orElseThrow(OrderNotFoundException::new);
-		orderItemRepository.deleteAllByOrderId(orderId.toString());
-		orderRepository.delete(order);
+		orderItemRepository.deleteAllByOrderId(order.getId());
+		orderRepository.deleteById(order.getId());
 	}
 
 	@Transactional(

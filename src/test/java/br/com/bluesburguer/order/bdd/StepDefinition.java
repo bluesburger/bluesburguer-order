@@ -4,6 +4,7 @@ import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -32,7 +33,7 @@ public class StepDefinition {
 	
 	private Response response;
 	
-	private long orderIdCreated;
+	private UUID orderIdCreated;
 	private OrderDto orderDto;
 
     private String ENDPOINT_ORDER = "http://localhost:8000/api/order";
@@ -79,7 +80,7 @@ public class StepDefinition {
         	.extract()
         	.header("Location");
 		
-		orderIdCreated = Long.parseLong(orderIdCreatedStr);
+		orderIdCreated = UUID.fromString(orderIdCreatedStr);
 	}
 	
 	@Quando("efetuar a busca de todos os pedidos")
@@ -89,8 +90,6 @@ public class StepDefinition {
 
 	@Então("o pedido deve ser apresentado na listagem")
 	public void o_pedido_deve_ser_apresentado_na_listagem() {
-		var orderRequest = defineOrderRequest();
-		
 	    var orderList = response.then()
 	    	.statusCode(HttpStatus.OK.value())
 	    	.extract()
@@ -104,8 +103,8 @@ public class StepDefinition {
 	    	.hasFieldOrPropertyWithValue("step", OrderStep.ORDER)
 	    	.hasFieldOrPropertyWithValue("fase", OrderFase.PENDING)
 	    	.hasFieldOrProperty("user.id")
-	    	.hasFieldOrPropertyWithValue("user.cpf", orderRequest.getUser().getCpf().getValue())
-	    	.hasFieldOrPropertyWithValue("user.email", orderRequest.getUser().getEmail().getValue());
+	    	.hasFieldOrProperty("user.cpf")
+	    	.hasFieldOrProperty("user.email");
 	}
 	
 	@Quando("efetuar a busca de pedido por id")

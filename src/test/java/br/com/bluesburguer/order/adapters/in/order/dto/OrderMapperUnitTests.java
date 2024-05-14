@@ -33,7 +33,7 @@ class OrderMapperUnitTests {
 			var order = OrderMocks.order(ORDER_ID);
 			
 			assertThat(orderMapper.to(order))
-				.hasFieldOrPropertyWithValue("id", order.getId())
+				.hasFieldOrPropertyWithValue("id", UUID.fromString(order.getId()))
 				.hasFieldOrPropertyWithValue("step", order.getStep())
 				.hasFieldOrPropertyWithValue("fase", order.getFase())
 				.hasFieldOrProperty("items")
@@ -68,7 +68,7 @@ class OrderMapperUnitTests {
 				.when(userMapper).from(user);
 			
 			assertThat(orderMapper.from(orderDto))
-				.hasFieldOrPropertyWithValue("id", orderDto.getId())
+				.hasFieldOrPropertyWithValue("id", orderDto.getId().toString())
 				.hasFieldOrProperty("createdTime")
 				.hasFieldOrProperty("updatedTime")
 				.hasFieldOrPropertyWithValue("step", orderDto.getStep())
