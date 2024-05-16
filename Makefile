@@ -46,13 +46,23 @@ sonarqube-publish:
 	
 sonarqube-analyze: build sonarqube-publish
 
+docker-image-local:
+	@.\mvnw clean install -Ppackage
+	@docker tag ordering-system-order:latest 637423186279.dkr.ecr.us-east-1.amazonaws.com/ordering-system-order:latest
+	@docker push 637423186279.dkr.ecr.us-east-1.amazonaws.com/ordering-system-order:latest 
+
+docker-image:
+	@docker build -t ordering-system-order .
+	@docker tag ordering-system-order:latest 637423186279.dkr.ecr.us-east-1.amazonaws.com/ordering-system-order:latest
+	@docker push 637423186279.dkr.ecr.us-east-1.amazonaws.com/ordering-system-order:latest 
+
 ## Test
 
 unit-test:
-	@.\mvnw $(MVN_ARGS) test -P unit-test
+	@.\mvnw $(MVN_ARGS) test -Punit-test
 
 integration-test:
-	@.\mvnw $(MVN_ARGS) test -P integration-test
+	@.\mvnw $(MVN_ARGS) test -Pintegration-test
 
 system-test:
 	@ .\mvnw $(MVN_ARGS) test -Psystem-test
