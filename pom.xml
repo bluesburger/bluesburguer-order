@@ -79,7 +79,7 @@
 	    <sonar.sources>src/main/java</sonar.sources>
 	    <sonar.organization>bluesburger</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
-	    <sonar.coverage.exclusions>**/configuration/**.java, **/performance/**.java, **/OrderingsystemProductionApplication.java, **/data.sql</sonar.coverage.exclusions>
+	    <sonar.coverage.exclusions>**/configuration/**.java, **/performance/**.java, **/bdd/**.java, **/BluesBurguerOrderApplication.java, **/data.sql</sonar.coverage.exclusions>
 	</properties>
 	
 	<dependencies>
