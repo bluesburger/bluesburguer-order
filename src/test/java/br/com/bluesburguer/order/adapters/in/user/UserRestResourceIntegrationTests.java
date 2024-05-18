@@ -38,7 +38,7 @@ class UserRestResourceIntegrationTests extends ApplicationIntegrationSupport {
 	private MockMvc mockMvc;
 	
 	@BeforeEach
-	void setup() throws Exception {
+	void setup() {
 	    this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
 	}
 	

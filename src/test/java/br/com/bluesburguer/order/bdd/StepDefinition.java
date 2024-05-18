@@ -9,8 +9,6 @@ import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 import br.com.bluesburguer.order.adapters.in.order.dto.OrderDto;
 import br.com.bluesburguer.order.adapters.in.order.dto.OrderRequest;
 import br.com.bluesburguer.order.adapters.in.order.item.dto.OrderItemRequest;
@@ -47,7 +45,7 @@ public class StepDefinition {
     }
     
 	@Quando("criar um novo pedido")
-	public void criar_um_novo_pedido() throws JsonProcessingException {
+	public void criar_um_novo_pedido() {
 		RestAssured.registerParser("Text", Parser.JSON);
 		
 		var orderRequest = defineOrderRequest();

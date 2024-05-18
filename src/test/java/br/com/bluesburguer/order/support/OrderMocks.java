@@ -78,7 +78,7 @@ public class OrderMocks {
 	}
 	
 	public static OrderItem orderItem(long orderItem, Order order) {
-		return new OrderItem(1L, 1L, order, 1, LocalDateTime.now(), LocalDateTime.now());
+		return new OrderItem(1L, orderItem, order, 1, LocalDateTime.now(), LocalDateTime.now());
 	}
 
 	public static OrderDto orderDto(UUID orderId) {

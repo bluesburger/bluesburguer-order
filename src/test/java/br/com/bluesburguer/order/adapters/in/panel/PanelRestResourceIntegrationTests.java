@@ -50,7 +50,7 @@ public class PanelRestResourceIntegrationTests extends ApplicationIntegrationSup
 	private MockMvc mockMvc;
 	
 	@BeforeEach
-	public void setup() throws Exception {
+	public void setup() {
 	    this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
 	}
 	
@@ -72,7 +72,7 @@ public class PanelRestResourceIntegrationTests extends ApplicationIntegrationSup
 			
 			var createdOrder = createNewOrder(cpf, email);
 			
-			validatePersistedOrder(createdOrder, step, fase, cpf, email);
+			validatePersistedOrder(createdOrder, step, fase);
 			
 			mockMvc
 				.perform(get("/api/panel"))
@@ -105,7 +105,7 @@ public class PanelRestResourceIntegrationTests extends ApplicationIntegrationSup
 			
 			var createdOrder = createNewOrder(cpf, email);
 			
-			validatePersistedOrder(createdOrder, step, fase, cpf, email);
+			validatePersistedOrder(createdOrder, step, fase);
 			
 			mockMvc
 				.perform(get("/api/panel/{step}", step))
@@ -136,7 +136,7 @@ public class PanelRestResourceIntegrationTests extends ApplicationIntegrationSup
 	}
 	
 	private void validatePersistedOrder(Optional<Order> optionalOrder, 
-			OrderStep step, OrderFase fase, String cpf, String email) {
+			OrderStep step, OrderFase fase) {
 		assertThat(optionalOrder)
 			.isPresent()
 			.get()
