@@ -13,7 +13,7 @@ import br.com.bluesburguer.order.core.domain.OrderFase;
 import br.com.bluesburguer.order.core.domain.OrderStatus;
 import br.com.bluesburguer.order.core.domain.OrderStep;
 
-class OrderStatusUpdatedUnitTest {
+class OrderStatusUpdatedUnitTests {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().findAndRegisterModules();    
 
 	@Test
