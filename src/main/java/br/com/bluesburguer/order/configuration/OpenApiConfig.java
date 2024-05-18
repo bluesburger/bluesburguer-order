@@ -8,8 +8,7 @@ import io.swagger.v3.oas.annotations.servers.Server;
 		info = @Info(
 				title = "Bluesburguer Order",
 				version = "v2.0"
-		),
-		servers = @Server(url = "http://localhost:${server.port}")
+		)
 )
 public class OpenApiConfig {
 
