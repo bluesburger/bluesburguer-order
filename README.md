@@ -12,3 +12,7 @@ Instalação
 
 Desinstalação
 - Rodar localmente o comando `make down`
+
+Coverage
+
+![Coverage](https://i.imgur.com/gyqc28G.png)
