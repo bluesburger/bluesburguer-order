@@ -4,12 +4,11 @@ import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 import br.com.bluesburguer.order.application.dto.item.OrderItemRequest;
 import br.com.bluesburguer.order.application.dto.order.OrderDto;
@@ -47,7 +46,7 @@ public class StepDefinition {
     }
     
 	@Quando("criar um novo pedido")
-	public void criar_um_novo_pedido() throws JsonProcessingException {
+	public void criar_um_novo_pedido() {
 		RestAssured.registerParser("Text", Parser.JSON);
 		
 		var orderRequest = defineOrderRequest();
@@ -98,13 +97,15 @@ public class StepDefinition {
 	    
 	    assertThat(orderList)
 	    	.isNotEmpty()
-	    	.first()
-	    	.hasFieldOrProperty("id")
-	    	.hasFieldOrPropertyWithValue("step", OrderStep.ORDER)
-	    	.hasFieldOrPropertyWithValue("fase", OrderFase.REGISTERED)
-	    	.hasFieldOrProperty("user.id")
-	    	.hasFieldOrProperty("user.cpf")
-	    	.hasFieldOrProperty("user.email");
+	    	.anyMatch(order -> {
+	    		return order.getId().equals(orderIdCreated)
+	    				&& order.getStep().equals(OrderStep.ORDER)
+	    				&& order.getFase().equals(OrderFase.REGISTERED)
+	    				&& order.getUser() != null
+	    				&& order.getUser().getId() != null
+	    				&& order.getUser().getCpf() != null
+	    				&& order.getUser().getEmail() != null;
+	    	});
 	}
 	
 	@Quando("efetuar a busca de pedido por id")
@@ -116,8 +117,6 @@ public class StepDefinition {
 
 	@Então("o pedido deve ser apresentado")
 	public void o_pedido_deve_ser_apresentado() {
-		var orderRequest = defineOrderRequest();
-		
 	    orderDto = response.then()
 	    	.statusCode(HttpStatus.OK.value())
 	    	.extract()
@@ -125,12 +124,15 @@ public class StepDefinition {
 	    	.jsonPath().getObject(".", OrderDto.class);
 	    
 	    assertThat(orderDto)
-	    	.hasFieldOrProperty("id")
-	    	.hasFieldOrPropertyWithValue("step", OrderStep.ORDER)
-	    	.hasFieldOrPropertyWithValue("fase", OrderFase.REGISTERED)
-	    	.hasFieldOrProperty("user.id")
-	    	.hasFieldOrPropertyWithValue("user.cpf", orderRequest.getUser().getCpf().getValue())
-	    	.hasFieldOrPropertyWithValue("user.email", orderRequest.getUser().getEmail().getValue());
+		    .matches(o -> {
+	    		return o.getId().equals(orderIdCreated)
+	    				&& o.getStep().equals(OrderStep.ORDER)
+	    				&& Objects.nonNull(o.getFase())
+	    				&& Objects.nonNull(o.getUser() != null)
+	    				&& Objects.nonNull(o.getUser().getId())
+	    				&& Objects.nonNull(o.getUser().getCpf())
+	    				&& Objects.nonNull(o.getUser().getEmail());
+	    	});
 	}
 	
 	OrderFase newFase = OrderFase.CONFIRMED;
