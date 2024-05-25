@@ -11,14 +11,14 @@ import org.springframework.http.MediaType;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import br.com.bluesburguer.order.adapters.in.order.dto.OrderDto;
-import br.com.bluesburguer.order.adapters.in.order.dto.OrderRequest;
-import br.com.bluesburguer.order.adapters.in.order.item.dto.OrderItemRequest;
-import br.com.bluesburguer.order.adapters.in.user.dto.UserRequest;
-import br.com.bluesburguer.order.core.domain.Cpf;
-import br.com.bluesburguer.order.core.domain.Email;
-import br.com.bluesburguer.order.core.domain.OrderFase;
-import br.com.bluesburguer.order.core.domain.OrderStep;
+import br.com.bluesburguer.order.application.dto.item.OrderItemRequest;
+import br.com.bluesburguer.order.application.dto.order.OrderDto;
+import br.com.bluesburguer.order.application.dto.order.OrderRequest;
+import br.com.bluesburguer.order.application.dto.user.UserRequest;
+import br.com.bluesburguer.order.domain.entity.Cpf;
+import br.com.bluesburguer.order.domain.entity.Email;
+import br.com.bluesburguer.order.domain.entity.OrderFase;
+import br.com.bluesburguer.order.domain.entity.OrderStep;
 import io.cucumber.java.pt.Dado;
 import io.cucumber.java.pt.Então;
 import io.cucumber.java.pt.Quando;
@@ -101,7 +101,7 @@ public class StepDefinition {
 	    	.first()
 	    	.hasFieldOrProperty("id")
 	    	.hasFieldOrPropertyWithValue("step", OrderStep.ORDER)
-	    	.hasFieldOrPropertyWithValue("fase", OrderFase.PENDING)
+	    	.hasFieldOrPropertyWithValue("fase", OrderFase.REGISTERED)
 	    	.hasFieldOrProperty("user.id")
 	    	.hasFieldOrProperty("user.cpf")
 	    	.hasFieldOrProperty("user.email");
@@ -127,13 +127,13 @@ public class StepDefinition {
 	    assertThat(orderDto)
 	    	.hasFieldOrProperty("id")
 	    	.hasFieldOrPropertyWithValue("step", OrderStep.ORDER)
-	    	.hasFieldOrPropertyWithValue("fase", OrderFase.PENDING)
+	    	.hasFieldOrPropertyWithValue("fase", OrderFase.REGISTERED)
 	    	.hasFieldOrProperty("user.id")
 	    	.hasFieldOrPropertyWithValue("user.cpf", orderRequest.getUser().getCpf().getValue())
 	    	.hasFieldOrPropertyWithValue("user.email", orderRequest.getUser().getEmail().getValue());
 	}
 	
-	OrderFase newFase = OrderFase.PENDING;
+	OrderFase newFase = OrderFase.CONFIRMED;
 	
 	@Então("o pedido com a nova fase deve ser apresentado")
 	public void o_pedido_com_a_nova_fase_deve_ser_apresentado() {
