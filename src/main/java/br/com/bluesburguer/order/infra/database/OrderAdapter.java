@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import br.com.bluesburguer.order.application.dto.item.OrderItemRequest;
 import br.com.bluesburguer.order.application.dto.order.OrderRequest;
+import br.com.bluesburguer.order.application.sqs.events.OrderCreatedEvent;
 import br.com.bluesburguer.order.domain.entity.OrderFase;
 import br.com.bluesburguer.order.domain.entity.OrderStep;
 import br.com.bluesburguer.order.domain.exception.OrderNotFoundException;
@@ -16,6 +17,7 @@ import br.com.bluesburguer.order.domain.exception.UserNotFoundException;
 import br.com.bluesburguer.order.domain.service.OrderPort;
 import br.com.bluesburguer.order.infra.database.entity.OrderEntity;
 import br.com.bluesburguer.order.infra.database.entity.OrderItemEntity;
+import br.com.bluesburguer.order.infra.sqs.events.OrderEventPublisher;
 import jakarta.persistence.EntityExistsException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +32,8 @@ public class OrderAdapter implements OrderPort {
 	private final OrderItemRepository orderItemRepository;
 
 	private final OrderRepository orderRepository;
+	
+	private final OrderEventPublisher<OrderCreatedEvent> orderCreatedEventPublisher;
 
 	public List<OrderEntity> getAll() {
 		return orderRepository.findAll();
@@ -62,13 +66,16 @@ public class OrderAdapter implements OrderPort {
 				.map(userService::saveIfNotExist)
 				.orElseThrow(UserNotFoundException::new);
 		
-		var newOrder = new OrderEntity(OrderFase.REGISTERED, orderUser);
+		var newOrder = new OrderEntity(OrderFase.CREATED, orderUser);
 		
 		var savedOrder = orderRepository.save(newOrder);
 		command.getItems().stream()
 			.map(item -> saveItem(item, savedOrder))
 			.forEach(savedOrder::add);
 		
+		orderCreatedEventPublisher
+			.publish(OrderCreatedEvent.builder().orderId(savedOrder.getId())
+			.build());
 		return Optional.of(savedOrder);
 	}
 

@@ -298,6 +298,29 @@
             <version>3.9.5</version>
             <scope>test</scope>
         </dependency>
+        
+        <!-- SQS Listener -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-aws-messaging</artifactId>
+			<version>2.2.6.RELEASE</version>
+		</dependency>
+        
+        <!-- SQS Publisher -->
+		<dependency>
+		    <groupId>io.awspring.cloud</groupId>
+		    <artifactId>spring-cloud-aws-starter-sqs</artifactId>
+		</dependency>
+		<dependency>
+		    <groupId>io.awspring.cloud</groupId>
+		    <artifactId>spring-cloud-aws-starter</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-messaging</artifactId>
+			<version>5.3.24</version>
+		</dependency>
 	</dependencies>
 
 	<build>
