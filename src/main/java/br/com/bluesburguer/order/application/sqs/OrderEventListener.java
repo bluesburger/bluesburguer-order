@@ -10,6 +10,7 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 
 import br.com.bluesburguer.order.application.sqs.commands.CancelOrderCommand;
+import br.com.bluesburguer.order.application.sqs.commands.OrderConfirmedCommand;
 import br.com.bluesburguer.order.domain.entity.OrderFase;
 import br.com.bluesburguer.order.domain.entity.OrderStep;
 import br.com.bluesburguer.order.domain.service.OrderPort;
@@ -29,6 +30,17 @@ public class OrderEventListener {
 		log.info("Command received: {}", command.toString());
 		var uuid = UUID.fromString(command.getOrderId());
 		var updated = orderPort.updateStepAndFase(uuid, OrderStep.ORDER, OrderFase.CANCELED)
+			.isPresent();
+		if (updated) {
+			ack.acknowledge();
+		}
+	}
+	
+	@SqsListener(value = "${queue.order-confirmed-command:queue-order-confirmed-command}", deletionPolicy = SqsMessageDeletionPolicy.NEVER)
+	public void handle(@Payload OrderConfirmedCommand command, Acknowledgment ack) {
+		log.info("Command received: {}", command.toString());
+		var uuid = UUID.fromString(command.getOrderId());
+		var updated = orderPort.updateStepAndFase(uuid, OrderStep.ORDER, OrderFase.	CONFIRMED)
 			.isPresent();
 		if (updated) {
 			ack.acknowledge();
