@@ -24,23 +24,23 @@ import lombok.extern.slf4j.Slf4j;
 public class OrderEventListener {
 	
 	private final OrderPort orderPort;
-
-	@SqsListener(value = "${queue.cancel-order-command:queue-cancel-order-command}", deletionPolicy = SqsMessageDeletionPolicy.NEVER)
-	public void handle(@Payload CancelOrderCommand command, Acknowledgment ack) {
+	
+	@SqsListener(value = "${queue.order-confirmed-command:queue-order-confirmed-command.fifo}", deletionPolicy = SqsMessageDeletionPolicy.NEVER)
+	public void handle(@Payload OrderConfirmedCommand command, Acknowledgment ack) {
 		log.info("Command received: {}", command.toString());
 		var uuid = UUID.fromString(command.getOrderId());
-		var updated = orderPort.updateStepAndFase(uuid, OrderStep.ORDER, OrderFase.CANCELED)
+		var updated = orderPort.updateStepAndFase(uuid, OrderStep.ORDER, OrderFase.	CONFIRMED)
 			.isPresent();
 		if (updated) {
 			ack.acknowledge();
 		}
 	}
-	
-	@SqsListener(value = "${queue.order-confirmed-command:queue-order-confirmed-command}", deletionPolicy = SqsMessageDeletionPolicy.NEVER)
-	public void handle(@Payload OrderConfirmedCommand command, Acknowledgment ack) {
+
+	@SqsListener(value = "${queue.cancel-order-command:queue-cancel-order-command.fifo}", deletionPolicy = SqsMessageDeletionPolicy.NEVER)
+	public void handle(@Payload CancelOrderCommand command, Acknowledgment ack) {
 		log.info("Command received: {}", command.toString());
 		var uuid = UUID.fromString(command.getOrderId());
-		var updated = orderPort.updateStepAndFase(uuid, OrderStep.ORDER, OrderFase.	CONFIRMED)
+		var updated = orderPort.updateStepAndFase(uuid, OrderStep.ORDER, OrderFase.CANCELED)
 			.isPresent();
 		if (updated) {
 			ack.acknowledge();
