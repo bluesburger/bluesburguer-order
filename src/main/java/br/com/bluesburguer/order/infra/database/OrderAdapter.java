@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 import org.springframework.stereotype.Service;
 
 import br.com.bluesburguer.order.application.dto.item.OrderItemRequest;
+import br.com.bluesburguer.order.application.dto.order.OrderMapper;
 import br.com.bluesburguer.order.application.dto.order.OrderRequest;
 import br.com.bluesburguer.order.application.sqs.events.OrderCreatedEvent;
 import br.com.bluesburguer.order.domain.entity.OrderFase;
@@ -32,6 +33,8 @@ public class OrderAdapter implements OrderPort {
 	private final OrderItemRepository orderItemRepository;
 
 	private final OrderRepository orderRepository;
+	
+	private final OrderMapper orderMapper;
 	
 	private final OrderEventPublisher<OrderCreatedEvent> orderCreatedEventPublisher;
 
@@ -73,9 +76,8 @@ public class OrderAdapter implements OrderPort {
 			.map(item -> saveItem(item, savedOrder))
 			.forEach(savedOrder::add);
 		
-		orderCreatedEventPublisher
-			.publish(OrderCreatedEvent.builder().orderId(savedOrder.getId())
-			.build());
+		var event = OrderCreatedEvent.builder().orderId(savedOrder.getId()).build();
+		orderCreatedEventPublisher.publish(event);
 		return Optional.of(savedOrder);
 	}
 

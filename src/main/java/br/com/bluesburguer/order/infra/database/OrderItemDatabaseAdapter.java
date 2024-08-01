@@ -24,14 +24,14 @@ public class OrderItemDatabaseAdapter implements IOrderItemDatabaseAdapter {
 	@Override
 	public OrderItem getItemByOrderItemId(Long orderId) {
 		return orderItemRepository.findByOrderItemId(orderId)
-				.map(orderMapper::toOrderItemEntity)
+				.map(orderMapper::toOrderItem)
 				.orElse(null);
 	}
 
 	@Override
 	public OrderItem getItemById(Long orderItemId) {
 		return orderItemRepository.findById(orderItemId)
-				.map(orderMapper::toOrderItemEntity)
+				.map(orderMapper::toOrderItem)
 				.orElse(null);
 	}
 
@@ -50,7 +50,7 @@ public class OrderItemDatabaseAdapter implements IOrderItemDatabaseAdapter {
 					item.setQuantity(itemRequest.getQuantity());
 					return orderItemRepository.save(item);
 				})
-				.map(orderMapper::toOrderItemEntity)
+				.map(orderMapper::toOrderItem)
 				.orElseThrow(OrderNotFoundException::new);
 		
 	}

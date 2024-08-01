@@ -9,7 +9,5 @@ public class OrderItem {
 
 	private Long id;
 	
-	private String orderId;
-	
 	private Integer quantity;
 }

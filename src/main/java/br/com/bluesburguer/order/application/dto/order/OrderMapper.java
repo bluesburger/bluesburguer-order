@@ -54,7 +54,7 @@ public class OrderMapper {
 		return order;
 	}
 	
-	public OrderItem toOrderItemEntity(OrderItemEntity entity) {
-		return new OrderItem(entity.getId(), entity.getOrder().getId(), entity.getQuantity());
+	public OrderItem toOrderItem(OrderItemEntity entity) {
+		return new OrderItem(entity.getId(), entity.getQuantity());
 	}
 }

@@ -104,7 +104,7 @@ class OrderMapperUnitTests {
 			var orderEntity = OrderMocks.order();
 			var orderItemEntity = OrderMocks.orderItem(1L, orderEntity);
 			
-			assertThat(orderMapper.toOrderItemEntity(orderItemEntity))
+			assertThat(orderMapper.toOrderItem(orderItemEntity))
 				.hasFieldOrPropertyWithValue("id", orderItemEntity.getId())
 				.hasFieldOrPropertyWithValue("orderId", orderEntity.getId())
 				.hasFieldOrPropertyWithValue("quantity", orderItemEntity.getQuantity());
