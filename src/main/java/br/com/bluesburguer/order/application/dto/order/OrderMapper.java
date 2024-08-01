@@ -36,7 +36,7 @@ public class OrderMapper {
 	}
 	
 	public OrderItemDto toOrderItemDto(OrderItemEntity orderItem) {
-		return new OrderItemDto(orderItem.getId(), orderItem.getQuantity());
+		return new OrderItemDto(orderItem.getOrderItemId(), orderItem.getQuantity());
 	}
 	
 	public OrderEntity toOrderEntity(OrderDto orderDto) {

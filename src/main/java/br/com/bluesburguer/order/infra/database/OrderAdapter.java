@@ -73,8 +73,11 @@ public class OrderAdapter implements OrderPort {
 		
 		var savedOrder = orderRepository.save(newOrder);
 		command.getItems().stream()
-			.map(item -> saveItem(item, savedOrder))
-			.forEach(savedOrder::add);
+			.forEach(item -> {
+				var optionalItem = orderItemRepository.findById(item.getId());
+				optionalItem.orElse(saveItem(item, savedOrder));
+			});
+//			.forEach(savedOrder::add);
 		
 		var event = OrderCreatedEvent.builder().orderId(savedOrder.getId()).build();
 		orderCreatedEventPublisher.publish(event);

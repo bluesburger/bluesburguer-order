@@ -38,7 +38,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class OrderController {
 	
-	private final OrderAdapter orderService;
+	private final OrderAdapter orderAdapter;
 	
 	private final OrderMapper orderMapper;
 	
@@ -49,7 +49,7 @@ public class OrderController {
 	})
 	@GetMapping
 	public List<OrderDto> getAll() {
-		return orderService.getAll().stream()
+		return orderAdapter.getAll().stream()
 			.map(orderMapper::toOrderDto)
 			.toList();
 	}
@@ -64,7 +64,7 @@ public class OrderController {
 	})
 	@GetMapping("/{orderId}")
 	public OrderDto getById(@PathVariable UUID orderId) {
-		return orderService.getById(orderId)
+		return orderAdapter.getById(orderId)
 			.map(orderMapper::toOrderDto)
 			.orElseThrow(OrderNotFoundException::new);
 	}
@@ -77,7 +77,7 @@ public class OrderController {
 	@GetMapping("/step/{step}")
 	public List<OrderDto> getByStep(@PathVariable OrderStep step, 
 			@RequestParam(required = false) List<OrderFase> fase) {
-		return orderService.getAllByStep(step, fase).stream()
+		return orderAdapter.getAllByStep(step, fase).stream()
 				.map(orderMapper::toOrderDto)
 				.toList();
 	}
@@ -91,7 +91,7 @@ public class OrderController {
 	})
 	@PostMapping(consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	public ResponseEntity<URI> createNewOrder(@Valid @RequestBody OrderRequest orderRequest) {
-		return orderService.createNewOrder(orderRequest)
+		return orderAdapter.createNewOrder(orderRequest)
 				.map(orderMapper::toOrderDto)
 				.map(dto -> {
 					var orderId = String.valueOf(dto.getId());
@@ -110,7 +110,7 @@ public class OrderController {
 	})
 	@PutMapping(value = "/{orderId}")
 	public OrderDto updateOrderItems(@PathVariable UUID orderId, @Valid @RequestBody List<OrderItemRequest> orderItems) {
-		return orderService.updateOrderItems(orderId, orderItems)
+		return orderAdapter.updateOrderItems(orderId, orderItems)
 				.map(orderMapper::toOrderDto)
 				.orElseThrow(OrderNotFoundException::new);
 	}
@@ -124,7 +124,7 @@ public class OrderController {
 	})
 	@PutMapping(value = "/{orderId}/{step}/{fase}")
 	public OrderDto updateStepAndFase(@PathVariable UUID orderId, @PathVariable OrderStep step, @PathVariable OrderFase fase) {
-		return orderService.updateStepAndFase(orderId, step, fase)
+		return orderAdapter.updateStepAndFase(orderId, step, fase)
 				.map(orderMapper::toOrderDto)
 				.orElseThrow(OrderNotFoundException::new);
 	}
@@ -138,7 +138,7 @@ public class OrderController {
 	})
 	@PutMapping(value = "/{orderId}/{fase}")
 	public OrderDto updateFase(@PathVariable UUID orderId, @PathVariable OrderFase fase) {
-		return orderService.updateFase(orderId, fase)
+		return orderAdapter.updateFase(orderId, fase)
 				.map(orderMapper::toOrderDto)
 				.orElseThrow(OrderNotFoundException::new);
 	}
@@ -150,7 +150,7 @@ public class OrderController {
 	})
 	@DeleteMapping("/{orderId}")
 	public ResponseEntity<Void> deleteById(@PathVariable UUID orderId) {
-		orderService.deleteById(orderId);
+		orderAdapter.deleteById(orderId);
 		return ResponseEntity.noContent().build();
 	}
 }
