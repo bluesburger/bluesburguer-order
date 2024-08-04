@@ -50,7 +50,7 @@ public class PanelControllerIntegrationTests extends ApplicationIntegrationSuppo
 	private MockMvc mockMvc;
 	
 	@BeforeEach
-	public void setup() throws Exception {
+	public void setup() {
 	    this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
 	}
 	
@@ -135,7 +135,7 @@ public class PanelControllerIntegrationTests extends ApplicationIntegrationSuppo
 				.createNewOrder(new OrderRequest(items, user));
 	}
 	
-	private void validatePersistedOrder(Optional<OrderEntity> optionalOrder, 
+	private void validatePersistedOrder(Optional<OrderEntity> optionalOrder,
 			OrderStep step, OrderFase fase) {
 		assertThat(optionalOrder)
 			.isPresent()

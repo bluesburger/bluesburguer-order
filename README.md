@@ -3,6 +3,7 @@ Responsável por resolver os pedidos:
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=bluesburger_bluesburguer-order&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=bluesburger_bluesburguer-order)
 
+
 ## Para utilizar
 
 Instalação
@@ -11,3 +12,7 @@ Instalação
 
 Desinstalação
 - Rodar localmente o comando `make down`
+
+Coverage
+
+![Coverage](https://i.imgur.com/gyqc28G.png)
