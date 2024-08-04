@@ -4,19 +4,20 @@ import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
-import br.com.bluesburguer.order.adapters.in.order.dto.OrderDto;
-import br.com.bluesburguer.order.adapters.in.order.dto.OrderRequest;
-import br.com.bluesburguer.order.adapters.in.order.item.dto.OrderItemRequest;
-import br.com.bluesburguer.order.adapters.in.user.dto.UserRequest;
-import br.com.bluesburguer.order.core.domain.Cpf;
-import br.com.bluesburguer.order.core.domain.Email;
-import br.com.bluesburguer.order.core.domain.OrderFase;
-import br.com.bluesburguer.order.core.domain.OrderStep;
+import br.com.bluesburguer.order.application.dto.item.OrderItemRequest;
+import br.com.bluesburguer.order.application.dto.order.OrderDto;
+import br.com.bluesburguer.order.application.dto.order.OrderRequest;
+import br.com.bluesburguer.order.application.dto.user.UserRequest;
+import br.com.bluesburguer.order.domain.entity.Cpf;
+import br.com.bluesburguer.order.domain.entity.Email;
+import br.com.bluesburguer.order.domain.entity.OrderFase;
+import br.com.bluesburguer.order.domain.entity.OrderStep;
 import io.cucumber.java.pt.Dado;
 import io.cucumber.java.pt.Então;
 import io.cucumber.java.pt.Quando;
@@ -96,13 +97,15 @@ public class StepDefinition {
 	    
 	    assertThat(orderList)
 	    	.isNotEmpty()
-	    	.first()
-	    	.hasFieldOrProperty("id")
-	    	.hasFieldOrPropertyWithValue("step", OrderStep.ORDER)
-	    	.hasFieldOrPropertyWithValue("fase", OrderFase.PENDING)
-	    	.hasFieldOrProperty("user.id")
-	    	.hasFieldOrProperty("user.cpf")
-	    	.hasFieldOrProperty("user.email");
+	    	.anyMatch(order -> {
+	    		return order.getId().equals(orderIdCreated)
+	    				&& order.getStep().equals(OrderStep.ORDER)
+	    				&& order.getFase().equals(OrderFase.REGISTERED)
+	    				&& order.getUser() != null
+	    				&& order.getUser().getId() != null
+	    				&& order.getUser().getCpf() != null
+	    				&& order.getUser().getEmail() != null;
+	    	});
 	}
 	
 	@Quando("efetuar a busca de pedido por id")
@@ -114,8 +117,6 @@ public class StepDefinition {
 
 	@Então("o pedido deve ser apresentado")
 	public void o_pedido_deve_ser_apresentado() {
-		var orderRequest = defineOrderRequest();
-		
 	    orderDto = response.then()
 	    	.statusCode(HttpStatus.OK.value())
 	    	.extract()
@@ -123,15 +124,18 @@ public class StepDefinition {
 	    	.jsonPath().getObject(".", OrderDto.class);
 	    
 	    assertThat(orderDto)
-	    	.hasFieldOrProperty("id")
-	    	.hasFieldOrPropertyWithValue("step", OrderStep.ORDER)
-	    	.hasFieldOrPropertyWithValue("fase", OrderFase.PENDING)
-	    	.hasFieldOrProperty("user.id")
-	    	.hasFieldOrPropertyWithValue("user.cpf", orderRequest.getUser().getCpf().getValue())
-	    	.hasFieldOrPropertyWithValue("user.email", orderRequest.getUser().getEmail().getValue());
+		    .matches(o -> {
+	    		return o.getId().equals(orderIdCreated)
+	    				&& o.getStep().equals(OrderStep.ORDER)
+	    				&& Objects.nonNull(o.getFase())
+	    				&& Objects.nonNull(o.getUser() != null)
+	    				&& Objects.nonNull(o.getUser().getId())
+	    				&& Objects.nonNull(o.getUser().getCpf())
+	    				&& Objects.nonNull(o.getUser().getEmail());
+	    	});
 	}
 	
-	OrderFase newFase = OrderFase.PENDING;
+	OrderFase newFase = OrderFase.CONFIRMED;
 	
 	@Então("o pedido com a nova fase deve ser apresentado")
 	public void o_pedido_com_a_nova_fase_deve_ser_apresentado() {

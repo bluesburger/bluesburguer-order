@@ -4,12 +4,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import br.com.bluesburguer.order.adapters.in.user.dto.UserDto;
-import br.com.bluesburguer.order.adapters.in.user.dto.UserRequest;
-import br.com.bluesburguer.order.adapters.out.persistence.entities.Order;
-import br.com.bluesburguer.order.adapters.out.persistence.entities.OrderUser;
-import br.com.bluesburguer.order.core.domain.Cpf;
-import br.com.bluesburguer.order.core.domain.Email;
+import br.com.bluesburguer.order.application.dto.user.UserDto;
+import br.com.bluesburguer.order.application.dto.user.UserRequest;
+import br.com.bluesburguer.order.domain.entity.Cpf;
+import br.com.bluesburguer.order.domain.entity.Email;
+import br.com.bluesburguer.order.infra.database.entity.OrderEntity;
+import br.com.bluesburguer.order.infra.database.entity.OrderUserEntity;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -20,17 +20,17 @@ public class UserMocks {
 	private static final String EMAIL = "email.usuario@server.com";
 	private static final UUID EXISTANT_ORDER_ID = UUID.fromString("b9881aef-ca1a-4ce6-843b-0717f0f0b90a");
 	
-	public static OrderUser user() {
-		return new OrderUser(1L, CPF, EMAIL, null, List.of());
+	public static OrderUserEntity user() {
+		return new OrderUserEntity(1L, CPF, EMAIL, null, List.of());
 	}
 
-	public static OrderUser user(long userId) {
-		var orders = List.of(OrderMocks.order(EXISTANT_ORDER_ID));
-		return new OrderUser(userId, CPF, EMAIL, LocalDateTime.now(), orders);
+	public static OrderUserEntity user(long userId) {
+		var orders = List.of(OrderMocks.orderEntity(EXISTANT_ORDER_ID));
+		return new OrderUserEntity(userId, CPF, EMAIL, LocalDateTime.now(), orders);
 	}
 	
-	public static OrderUser user(long userId, List<Order> orders) {
-		return new OrderUser(userId, CPF, EMAIL, LocalDateTime.now(), orders);
+	public static OrderUserEntity user(long userId, List<OrderEntity> orders) {
+		return new OrderUserEntity(userId, CPF, EMAIL, LocalDateTime.now(), orders);
 	}
 	
 	public static UserRequest userRequest() {

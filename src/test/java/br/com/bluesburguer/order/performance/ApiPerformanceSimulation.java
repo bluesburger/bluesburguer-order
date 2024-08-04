@@ -40,10 +40,10 @@ public class ApiPerformanceSimulation extends Simulation {
 			.check(status().is(201));
 	
 	ActionBuilder updateOrderFaseRequest = http("atualizar fase do pedido")
-			.put("/api/order/12642ba8-66cf-4dd5-8e97-71bd852efcf7/IN_PROGRESS");
+			.put("/api/order/12642ba8-66cf-4dd5-8e97-71bd852efcf7/CONFIRMED");
 	
 	ActionBuilder updateOrderStepAndFaseRequest = http("atualizar passo e fase do pedido")
-			.put("/api/order/556f2b18-bda4-4d05-934f-7c0063d78f48/KITCHEN/IN_PROGRESS");
+			.put("/api/order/556f2b18-bda4-4d05-934f-7c0063d78f48/KITCHEN/CONFIRMED");
 	
 	ScenarioBuilder cenarioAddOrder = scenario("adicionar pedido")
 				.exec(addOrderRequest);

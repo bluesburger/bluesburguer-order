@@ -3,7 +3,19 @@ install: down up
 down-all: down down-local sonarqube-down
 
 build:
-	@ .\mvnw clean install
+	@ .\mvnw clean install -Ppackage
+
+build-image:
+	@docker build -t ordering-system-order .
+
+build-image-local: build
+	@ docker build -f .\Dockerfile.local -t ordering-system-order .
+	@ docker tag ordering-system-order:latest 637423186279.dkr.ecr.us-east-1.amazonaws.com/ordering-system-order:latest
+	
+push-ecr:
+	@ docker push 637423186279.dkr.ecr.us-east-1.amazonaws.com/ordering-system-order:latest
+
+build-local-and-push: build-image-local push
 
 up:
 	@ echo Up service
@@ -45,16 +57,6 @@ sonarqube-publish:
 	@ .\mvnw sonar:sonar
 	
 sonarqube-analyze: build sonarqube-publish
-
-docker-image-local:
-	@.\mvnw clean install -Ppackage
-	@docker tag ordering-system-order:latest 637423186279.dkr.ecr.us-east-1.amazonaws.com/ordering-system-order:latest
-	@docker push 637423186279.dkr.ecr.us-east-1.amazonaws.com/ordering-system-order:latest 
-
-docker-image:
-	@docker build -t ordering-system-order .
-	@docker tag ordering-system-order:latest 637423186279.dkr.ecr.us-east-1.amazonaws.com/ordering-system-order:latest
-	@docker push 637423186279.dkr.ecr.us-east-1.amazonaws.com/ordering-system-order:latest 
 
 ## Test
 
